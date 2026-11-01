@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전생의 인연 궁합 | 두 사람은 전생에 어떤 사이였을까? - 전생 거울</title>
+<meta name="description" content="두 사람의 이름을 적으면 전생에 어떤 사이였는지 알려 드려요. 인연의 깊이, 이번 생에 다시 만난 이유, 잘 맞는 점과 조심할 점까지 무료로 확인해 보세요.">
+<meta name="theme-color" content="#18203A">
+<link rel="canonical" href="https://pstlf.co.kr/bond/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="전생 거울">
+<meta property="og:title" content="전생의 인연 궁합">
+<meta property="og:description" content="두 사람은 전생에 어떤 사이였을까? 이름만 넣으면 알려 드려요.">
+<meta property="og:url" content="https://pstlf.co.kr/bond/">
+<meta property="og:image" content="https://pstlf.co.kr/og-bond.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+
+<!-- 구글 애드센스 승인 후, 애드센스에서 받은 코드를 이 줄 아래에 붙여 넣으세요 -->
+
+<style>
+.intro { padding-top: 30px; }
+.bondvis {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 340 / 150;
+  margin: 4px 0 22px;
+}
+body[data-state="gazing"] .bondvis { margin-top: 12vh; }
+.thread-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.thread-ghost { fill: none; stroke: rgba(200,55,45,.45); stroke-width: 2; stroke-dasharray: .012 .02; stroke-linecap: round; }
+.thread {
+  fill: none;
+  stroke: var(--thread);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 4px rgba(200,55,45,.55));
+}
+body[data-state="gazing"] .thread { stroke-dashoffset: 0; transition: stroke-dashoffset 2.2s cubic-bezier(.45,.05,.3,1); }
+body[data-state="result"] .thread { stroke-dashoffset: 0; }
+.bubble {
+  position: absolute;
+  top: 50%;
+  width: 27%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 36% 30%, #34477c, #1d2747 72%);
+  box-shadow: 0 0 0 2px var(--brass), 0 0 0 6px rgba(200,164,94,.1), 0 8px 18px rgba(0,0,0,.35);
+  font-family: var(--display);
+  font-size: 1.1rem;
+  line-height: 1.2;
+  text-align: center;
+  color: #F4EFE3;
+  word-break: break-all;
+}
+.bubble.is-empty { color: var(--moon-dim); }
+.bubble.is-long { font-size: .92rem; }
+.bubble.is-longer { font-size: .78rem; }
+.bubble-a { left: 17%; }
+.bubble-b { left: 83%; }
+.knot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 17%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--night);
+  box-shadow: 0 0 0 2px var(--thread);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: #F4EFE3;
+  transition: background .4s ease, transform .4s ease;
+}
+.knot small { font-size: .62em; margin-left: 1px; }
+body[data-state="gazing"] .knot { animation: knot 1.1s ease-in-out infinite; }
+body[data-state="result"] .knot { background: var(--thread); transform: translate(-50%, -50%) scale(1.12); }
+@keyframes knot {
+  0%, 100% { box-shadow: 0 0 0 2px var(--thread), 0 0 0 0 rgba(200,55,45,.5); }
+  50% { box-shadow: 0 0 0 2px var(--thread), 0 0 0 10px rgba(200,55,45,0); }
+}
+.record-table { grid-template-columns: 6.2em 1fr; }
+.person { border: 0; padding: 0; margin: 0 0 6px; min-width: 0; }
+.person legend { font-family: var(--display); font-size: 1.05rem; color: var(--brass); padding: 0; margin-bottom: 8px; }
+.person-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.person-row .field input { padding: 0 12px; }
+.about {
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(233,228,216,.12);
+  color: var(--moon-dim);
+  font-size: .92rem;
+}
+.about h2 { font-family: var(--display); font-weight: 400; font-size: 1.1rem; color: #F4EFE3; margin: 0 0 6px; }
+.about p { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  body[data-state="gazing"] .thread { transition: none; }
+  body[data-state="gazing"] .knot { animation: none; }
+  .knot { transition: none; }
+}
+</style>
+</head>
+<body data-state="intro">
+<div class="page">
+  <header class="site-head">
+    <a class="wordmark" href="/">전생 거울</a>
+  </header>
+
+  <main>
+    <section class="intro" id="intro">
+      <h1>전생의 인연 궁합</h1>
+      <p class="lede">두 사람의 이름을 적으면, 전생에 두 사람이 어떤 사이였는지 보여 드려요.</p>
+    </section>
+
+    <p class="shared-note" id="sharedNote" hidden>친구가 보낸 인연서예요</p>
+
+    <div class="bondvis" aria-hidden="true">
+      <svg class="thread-svg" viewBox="0 0 340 150">
+        <path class="thread-ghost" pathLength="1" d="M58 75 C 105 140, 135 10, 170 75 S 235 140, 282 75"/>
+        <path class="thread" id="thread" pathLength="1" d="M58 75 C 105 140, 135 10, 170 75 S 235 140, 282 75"/>
+      </svg>
+      <div class="bubble bubble-a is-empty" id="bubbleA">나</div>
+      <div class="knot" id="knot">?</div>
+      <div class="bubble bubble-b is-empty" id="bubbleB">상대</div>
+    </div>
+
+    <form id="form" novalidate>
+      <fieldset class="person">
+        <legend>나</legend>
+        <div class="person-row">
+          <div class="field">
+            <label for="nameA">이름</label>
+            <input id="nameA" type="text" maxlength="10" autocomplete="off" placeholder="예: 김하늘" required>
+          </div>
+          <div class="field">
+            <label for="birthA">생년월일 <small>(선택)</small></label>
+            <input id="birthA" type="date" min="1900-01-01">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="person">
+        <legend>상대</legend>
+        <div class="person-row">
+          <div class="field">
+            <label for="nameB">이름</label>
+            <input id="nameB" type="text" maxlength="10" autocomplete="off" placeholder="예: 이바다" required>
+          </div>
+          <div class="field">
+            <label for="birthB">생년월일 <small>(선택)</small></label>
+            <input id="birthB" type="date" min="1900-01-01">
+          </div>
+        </div>
+      </fieldset>
+      <p class="form-error" id="error" role="alert"></p>
+      <button class="btn btn-primary" type="submit">인연 확인하기</button>
+    </form>
+
+    <section id="gazing" hidden>
+      <p class="gazing-text" id="gazingText" aria-live="polite"></p>
+    </section>
+
+    <section id="result" hidden>
+      <article class="scroll" id="scroll" aria-labelledby="rTitle">
+        <div class="rod"></div>
+        <div class="scroll-body">
+          <div class="paper">
+            <div class="paper-inner">
+              <div class="seal" aria-hidden="true">因緣</div>
+              <div class="record-head">
+                <p class="record-owner">두 사람의 전생 인연서</p>
+                <p class="record-lead" id="rLead"></p>
+              </div>
+              <h2 class="record-title" id="rTitle"></h2>
+
+              <dl class="record-table">
+                <dt>시대</dt><dd id="rEra"></dd>
+                <dt>장소</dt><dd id="rPlace"></dd>
+                <dt id="rRolesLabel">역할</dt><dd id="rRoles"></dd>
+                <dt>인연의 깊이</dt><dd id="rScore"></dd>
+                <dt>인연 한 단어</dt><dd id="rWord"></dd>
+              </dl>
+
+              <section class="record-sec">
+                <h3>그 생의 이야기</h3>
+                <p id="rStory"></p>
+              </section>
+              <section class="record-sec">
+                <h3>이번 생에 다시 만난 이유</h3>
+                <p id="rReason"></p>
+              </section>
+              <section class="record-sec">
+                <h3>잘 맞는 점</h3>
+                <p id="rGood"></p>
+              </section>
+              <section class="record-sec">
+                <h3>조심할 점</h3>
+                <p id="rCaution"></p>
+              </section>
+              <section class="record-sec">
+                <h3>두 사람에게 하는 말</h3>
+                <p id="rAdvice"></p>
+              </section>
+
+              <p class="record-sign" id="rSign"></p>
+            </div>
+          </div>
+        </div>
+        <div class="rod"></div>
+      </article>
+
+      <div class="actions" id="ownActions">
+        <button class="btn btn-primary" type="button" id="shareBtn">결과 공유하기</button>
+        <button class="btn btn-ghost" type="button" id="copyBtn">링크 복사</button>
+        <button class="btn btn-text" type="button" id="againBtn">다른 사람과 보기</button>
+      </div>
+      <div class="actions" id="sharedActions" hidden>
+        <button class="btn btn-primary" type="button" id="mineBtn">우리 인연도 보기</button>
+        <button class="btn btn-ghost" type="button" id="shareBtn2">이 결과 공유하기</button>
+      </div>
+
+      <aside class="ad-slot" id="adSlot">
+        <div class="ad-box" id="adBox">
+          <!-- ▼ 쿠팡 파트너스 배너 코드 ▼ -->
+
+          <!-- ▲ 여기까지 ▲ -->
+        </div>
+        <p class="ad-note">이 사이트는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+      </aside>
+    </section>
+
+    <section class="about" id="about">
+      <h2>붉은 실 이야기</h2>
+      <p>옛이야기 속 월하노인은 인연이 닿을 두 사람의 발목을 보이지 않는 붉은 실로 묶어 둔다고 해요. 이 실은 멀리 떨어져 있어도, 생이 바뀌어도 끊어지지 않는다고 전해져요. 연인뿐 아니라 친구, 가족, 동료와의 인연도 볼 수 있어요.</p>
+    </section>
+
+    <nav class="more" aria-label="다른 테스트">
+      <h2 class="more-title">다른 테스트도 해 보세요</h2>
+      <a class="more-item" href="/past-life/">
+        <span class="more-emblem"><svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22" fill="#25335e" stroke="#C8A45E" stroke-width="3"/><path d="M15 21a15 15 0 0 1 11-9" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+        <span class="more-text"><strong>전생 체험</strong><small>나는 전생에 누구였을까</small></span>
+      </a>
+      <a class="more-item" href="/tarot/">
+        <span class="more-emblem"><svg viewBox="0 0 56 56" aria-hidden="true"><rect x="15" y="6" width="26" height="44" rx="3" fill="#25335e" stroke="#C8A45E" stroke-width="2.5"/><rect x="19" y="10" width="18" height="36" rx="1.5" fill="none" stroke="#C8A45E" stroke-opacity=".5"/><path d="M28 19l2.4 6.1 6.1 2.4-6.1 2.4L28 36l-2.4-6.1-6.1-2.4 6.1-2.4z" fill="#C8A45E"/></svg></span>
+        <span class="more-text"><strong>오늘의 타로 한 장</strong><small>하루 한 번, 끌리는 카드로 보는 오늘</small></span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="site-foot">
+    <p>재미로 보는 궁합이에요. 입력한 이름과 생년월일은 어디에도 저장되지 않아요.</p>
+    <p><a href="/">전체 테스트</a> &nbsp; <a href="/privacy.html">개인정보처리방침</a></p>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/assets/site.js"></script>
+<script>
+(function () {
+  'use strict';
+  var S = window.Site;
+
+  /* ── 전생 인연 데이터 ({X}, {Y}는 역할이 있는 인연에서 두 사람 이름으로 바뀌어요) ── */
+  var TYPES = [
+    { era: '통일신라', place: '서라벌', t: '함께 산천을 누비던 화랑 동무', min: 92, max: 99, word: '단짝',
+      story: '두 사람은 같은 해에 화랑이 되어 이름난 산과 강을 함께 누볐습니다. 위험한 순간마다 서로의 등을 맡겼고, 한 사람이 다치면 다른 한 사람이 업고 산을 내려왔습니다.',
+      reason: '그 생에서 다 나누지 못한 우정을 마저 나누려고 다시 만났습니다. 말하지 않아도 통하는 순간이 많은 건 그 때문입니다.' },
+    { era: '조선 후기', place: '한양 북촌', t: '담장을 사이에 둔 이웃집 연인', min: 85, max: 97, word: '애틋함',
+      story: '두 사람은 담장 하나를 사이에 두고 자랐습니다. 담 너머로 몰래 편지를 주고받았지만, 집안의 반대로 끝내 맺어지지 못했습니다.',
+      reason: '그때 끝내 전하지 못한 말을 전하려고 다시 만났습니다. 이번 생에서는 마음을 미루지 않는 것이 좋습니다.' },
+    { era: '고려 시대', place: '강진 가마터', t: '청자 가마의 스승과 제자', roles: ['스승', '제자'], min: 78, max: 92, word: '배움',
+      story: '{X}님은 이름난 도공이었고, {Y}님은 그 곁에서 흙을 고르던 제자였습니다. 스승은 엄했지만, 제자가 처음으로 비색을 얻던 날 몰래 눈물을 훔쳤습니다.',
+      reason: '이번 생에는 역할이 바뀌어, {Y}님이 {X}님에게 가르쳐 줄 것이 많습니다. 서로에게 배우는 사이입니다.' },
+    { era: '16세기', place: '베네치아 리알토', t: '리알토 다리의 맞수 상인', min: 64, max: 80, word: '자극',
+      story: '두 사람은 같은 다리 위에서 향신료를 팔던 맞수였습니다. 평생 손님을 두고 다퉜지만, 늘그막에는 같은 술집에 나란히 앉아 웃었습니다.',
+      reason: '서로를 더 크게 만들어 주려고 다시 만났습니다. 가끔 부딪혀도 결국 서로에게 가장 큰 자극이 됩니다.' },
+    { era: '바이킹 시대', place: '북해', t: '폭풍 속 같은 배를 탄 선원', roles: ['구해 준 사람', '구조된 사람'], min: 80, max: 94, word: '은혜',
+      story: '거센 폭풍이 배를 덮친 밤, 바다에 빠진 {Y}님을 {X}님이 밧줄 하나로 끌어올렸습니다. 그날 이후 두 사람은 어떤 항해든 함께했습니다.',
+      reason: '{Y}님이 그때 갚지 못한 은혜를 갚으려고 다시 만났습니다. 이번 생에는 {Y}님이 {X}님의 든든한 편이 되어 줄 차례입니다.' },
+    { era: '잉카 제국', place: '쿠스코', t: '한 지붕 아래 자란 형제자매', min: 82, max: 95, word: '편안함',
+      story: '두 사람은 산비탈 작은 집에서 함께 자란 형제자매였습니다. 낮에는 감자밭에서 함께 일하고, 밤이면 같은 담요를 덮고 별을 셌습니다.',
+      reason: '가족처럼 기대고 쉴 곳이 되어 주려고 다시 만났습니다. 함께 있으면 꾸미지 않아도 편한 이유입니다.' },
+    { era: '빅토리아 시대', place: '런던', t: '헌책방 주인과 창가의 고양이', roles: ['책방 주인', '고양이'], min: 75, max: 90, word: '집사',
+      story: '{X}님은 오래된 헌책방의 주인이었고, {Y}님은 그 책방 창가에서 낮잠을 자던 고양이였습니다. 주인은 손님보다 고양이 밥을 먼저 챙겼습니다.',
+      reason: '그때의 버릇이 남아 이번 생에도 {X}님은 {Y}님을 은근히 챙기게 됩니다. {Y}님은 그걸 당연하게 여기는 편입니다.' },
+    { era: '당나라', place: '실크로드', t: '사막을 함께 건넌 상단 동료', min: 77, max: 91, word: '길동무',
+      story: '두 사람은 같은 상단에서 낙타를 몰며 사막을 건넜습니다. 모래폭풍에 길을 잃었을 때, 서로의 목소리만 듣고 다시 만났습니다.',
+      reason: '함께 먼 길을 가려고 다시 만났습니다. 둘이 함께 여행하면 유난히 잘 맞고, 고생도 추억이 됩니다.' },
+    { era: '조선 후기', place: '한양 궁궐', t: '임금과 끝까지 곁을 지킨 신하', roles: ['임금', '신하'], min: 70, max: 88, word: '믿음',
+      story: '{X}님은 나라를 다스리던 임금이었고, {Y}님은 모두가 등을 돌린 날에도 곁을 떠나지 않은 신하였습니다.',
+      reason: '그때의 믿음을 이어 가려고 다시 만났습니다. 이번 생에는 {X}님이 {Y}님을 더 챙겨 줄 차례입니다.' },
+    { era: '1920년대', place: '파리와 경성', t: '편지로만 만난 펜팔', min: 80, max: 93, word: '그리움',
+      story: '두 사람은 바다 건너로 편지만 주고받았습니다. 수십 통의 편지에 서로의 모든 것을 털어놓았지만, 끝내 얼굴을 보지 못했습니다.',
+      reason: '이번에는 직접 얼굴을 보고 이야기하려고 다시 만났습니다. 둘이 나누는 대화가 유난히 깊은 이유입니다.' },
+    { era: '에도 시대', place: '에도', t: '골목을 사이에 둔 앙숙 가게 주인', min: 58, max: 74, word: '티격태격',
+      story: '두 사람은 좁은 골목을 사이에 두고 마주 본 가게 주인이었습니다. 날마다 티격태격했지만, 한쪽 가게가 문을 닫던 날 다른 한 사람이 가장 오래 울었습니다.',
+      reason: '미운 정 고운 정을 마저 쌓으려고 다시 만났습니다. 자꾸 투닥거려도 없으면 허전한 사이입니다.' },
+    { era: '당나라', place: '장안 궁궐', t: '함께 합주하던 궁정 악사', min: 84, max: 96, word: '조화',
+      story: '한 사람은 비파를, 한 사람은 피리를 연주하던 궁정 악사였습니다. 두 사람이 함께 연주하면 황제도 잔을 내려놓고 귀를 기울였습니다.',
+      reason: '다시 한번 서로의 박자를 맞추려고 만났습니다. 함께 무언가를 하면 생각보다 훨씬 잘 맞습니다.' },
+    { era: '13세기', place: '몽골 초원', t: '적으로 만나 의형제가 된 전사', min: 68, max: 85, word: '반전',
+      story: '두 사람은 서로 다른 부족의 전사로 처음 만났습니다. 사흘 밤낮을 겨룬 끝에 서로를 인정했고, 그날 의형제를 맺었습니다.',
+      reason: '첫인상과 달리 깊은 사이가 되려고 다시 만났습니다. 처음엔 어색했어도 시간이 갈수록 가까워지는 인연입니다.' },
+    { era: '조선 후기', place: '관상감', t: '밤새 별을 세던 천문관 동료', min: 72, max: 86, word: '잔잔함',
+      story: '두 사람은 같은 관청에서 밤마다 별을 기록하던 동료였습니다. 긴 밤을 함께 새우며 말없이 같은 하늘을 올려다봤습니다.',
+      reason: '조용히 곁을 지켜 주려고 다시 만났습니다. 말이 없어도 어색하지 않은, 잔잔하고 오래가는 사이입니다.' }
+  ];
+
+  var GOOD = [
+    '한 사람이 지칠 때 다른 한 사람이 자연스럽게 힘이 되어 줍니다.',
+    '웃음 코드가 비슷해서 함께 있으면 시간이 빨리 갑니다.',
+    '서로의 부족한 부분을 채워 주는 조합입니다.',
+    '먹는 취향이 잘 맞아 함께 밥 먹는 시간이 즐겁습니다.',
+    '중요한 순간에 같은 선택을 하는 일이 많습니다.',
+    '오래 연락이 없어도 다시 만나면 금방 예전처럼 돌아갑니다.'
+  ];
+  var CAUTION = [
+    '둘 다 고집이 있어서 한번 부딪히면 오래갑니다. 먼저 사과하는 쪽이 이기는 겁니다.',
+    '편하다는 이유로 말을 함부로 하기 쉽습니다. 가까울수록 한 번 더 생각해 주세요.',
+    '서운한 걸 말하지 않고 쌓아 두는 편입니다. 작을 때 바로 말하는 게 좋습니다.',
+    '약속 시간에 대한 생각이 달라 다툼이 생기기 쉽습니다.',
+    '한 사람만 계속 맞춰 주면 균형이 무너집니다. 번갈아 양보해 주세요.',
+    '돈 문제는 처음부터 분명히 해 두는 게 좋습니다.'
+  ];
+  var ADVICE = [
+    '이번 생에는 고마운 마음을 미루지 말고 바로 표현해 보세요.',
+    '같이 처음 가 보는 곳에 가면 인연이 한층 깊어집니다.',
+    '가끔은 둘만의 시간을 따로 내어 보세요.',
+    '서로의 이야기를 끝까지 들어 주는 것만으로 충분합니다.',
+    '사진을 많이 남겨 두세요. 다음 생에도 알아볼 수 있게요.'
+  ];
+
+  function buildBond(seed, sortedNames) {
+    var r = S.rng(seed);
+    var type = S.pick(r, TYPES);
+    var score = S.range(r, type.min, type.max);
+    var good = S.pick(r, GOOD);
+    var caution = S.pick(r, CAUTION);
+    var advice = S.pick(r, ADVICE);
+    var flip = r() < 0.5;
+    var X = flip ? sortedNames[0] : sortedNames[1];
+    var Y = flip ? sortedNames[1] : sortedNames[0];
+    function fill(s) { return s.replace(/\{X\}/g, X).replace(/\{Y\}/g, Y); }
+    return {
+      type: type, score: score, good: good, caution: caution, advice: advice,
+      story: fill(type.story), reason: fill(type.reason),
+      roles: type.roles ? X + '님은 ' + type.roles[0] + ', ' + Y + '님은 ' + type.roles[1] : ''
+    };
+  }
+
+  /* ── 화면 ─────────────────────────────── */
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('form'), errorEl = $('error');
+  var nameA = $('nameA'), nameB = $('nameB'), birthA = $('birthA'), birthB = $('birthB');
+  var current = null;
+  birthA.max = birthB.max = S.todayKey();
+
+  function setBubble(el, name, fallback) {
+    el.textContent = name || fallback;
+    el.classList.toggle('is-empty', !name);
+    el.classList.toggle('is-long', name.length > 4 && name.length <= 6);
+    el.classList.toggle('is-longer', name.length > 6);
+  }
+  nameA.addEventListener('input', function () { setBubble($('bubbleA'), nameA.value.trim(), '나'); });
+  nameB.addEventListener('input', function () { setBubble($('bubbleB'), nameB.value.trim(), '상대'); });
+
+  function show(state) {
+    document.body.dataset.state = state;
+    $('intro').hidden = state !== 'intro';
+    $('about').hidden = state !== 'intro';
+    form.hidden = state !== 'intro';
+    $('gazing').hidden = state !== 'gazing';
+    $('result').hidden = state !== 'result';
+  }
+
+  function seedFor(a, da, b, db) {
+    var pair = [[a, da || ''], [b, db || '']].sort(function (p, q) { return p[0] < q[0] ? -1 : p[0] > q[0] ? 1 : (p[1] < q[1] ? -1 : 1); });
+    return S.hash(pair[0][0] + '|' + pair[0][1] + '&' + pair[1][0] + '|' + pair[1][1] + '#bond');
+  }
+
+  function sorted(a, b) { return [a, b].sort(); }
+
+  function shareUrl() {
+    if (!current) return S.baseUrl();
+    return S.baseUrl() + '?a=' + encodeURIComponent(current.a) + '&b=' + encodeURIComponent(current.b) + '&s=' + current.seed.toString(36);
+  }
+
+  function countUp(el, to) {
+    if (S.reduceMotion) { el.innerHTML = '<span>' + to + '<small>%</small></span>'; return; }
+    var start = null, dur = 900;
+    function frame(t) {
+      if (!start) start = t;
+      var p = Math.min(1, (t - start) / dur);
+      var v = Math.round(to * (1 - Math.pow(1 - p, 3)));
+      el.innerHTML = '<span>' + v + '<small>%</small></span>';
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function render(a, b, seed, shared) {
+    var bond = buildBond(seed, sorted(a, b));
+    current = { a: a, b: b, seed: seed, bond: bond };
+    setBubble($('bubbleA'), a, '나');
+    setBubble($('bubbleB'), b, '상대');
+
+    $('rLead').textContent = a + '님과 ' + b + '님은 전생에';
+    var title = $('rTitle');
+    title.textContent = bond.type.t;
+    var tail = document.createElement('span');
+    tail.className = 'tail';
+    tail.textContent = S.hasBatchim(bond.type.t) ? '이었습니다' : '였습니다';
+    title.appendChild(tail);
+
+    $('rEra').textContent = bond.type.era;
+    $('rPlace').textContent = bond.type.place;
+    $('rRolesLabel').hidden = $('rRoles').hidden = !bond.roles;
+    $('rRoles').textContent = bond.roles;
+    $('rScore').textContent = bond.score + '%';
+    $('rWord').textContent = bond.type.word;
+    $('rStory').textContent = bond.story;
+    $('rReason').textContent = bond.reason;
+    $('rGood').textContent = bond.good;
+    $('rCaution').textContent = bond.caution;
+    $('rAdvice').textContent = bond.advice;
+    $('rSign').textContent = S.koreanDate() + ', 붉은 실로 이어 기록함';
+
+    $('sharedNote').hidden = !shared;
+    $('ownActions').hidden = shared;
+    $('sharedActions').hidden = !shared;
+
+    var scroll = $('scroll');
+    scroll.classList.remove('is-open');
+    show('result');
+    window.scrollTo(0, 0);
+    countUp($('knot'), bond.score);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { scroll.classList.add('is-open'); });
+    });
+    S.setQuery('a=' + encodeURIComponent(a) + '&b=' + encodeURIComponent(b) + '&s=' + seed.toString(36));
+  }
+
+  function gaze(a, da, b, db) {
+    var seed = seedFor(a, da, b, db);
+    var lines = ['두 사람의 이름을 거울에 비추는 중…', '흩어진 실 가닥을 찾는 중…', '붉은 실이 이어지고 있어요…'];
+    var step = S.reduceMotion ? 250 : 850;
+    $('knot').textContent = '';
+    show('gazing');
+    window.scrollTo(0, 0);
+    var i = 0;
+    $('gazingText').textContent = lines[0];
+    var timer = setInterval(function () {
+      i++;
+      if (i < lines.length) { $('gazingText').textContent = lines[i]; return; }
+      clearInterval(timer);
+      render(a, b, seed, false);
+    }, step);
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var a = nameA.value.trim(), b = nameB.value.trim();
+    if (!a) { errorEl.textContent = '내 이름을 입력해 주세요.'; nameA.focus(); return; }
+    if (!b) { errorEl.textContent = '상대 이름을 입력해 주세요.'; nameB.focus(); return; }
+    if ((birthA.value && birthA.value > birthA.max) || (birthB.value && birthB.value > birthB.max)) {
+      errorEl.textContent = '생년월일은 오늘 이전 날짜로 골라 주세요.'; return;
+    }
+    errorEl.textContent = '';
+    document.activeElement && document.activeElement.blur();
+    gaze(a, birthA.value, b, birthB.value);
+  });
+
+  function reset() {
+    current = null;
+    S.setQuery('');
+    form.reset();
+    setBubble($('bubbleA'), '', '나');
+    setBubble($('bubbleB'), '', '상대');
+    $('knot').textContent = '?';
+    show('intro');
+    window.scrollTo(0, 0);
+  }
+
+  function share() {
+    if (!current) return;
+    var t = current.bond.type.t;
+    var tail = S.hasBatchim(t) ? '이었대요' : '였대요';
+    S.share({
+      title: '전생의 인연 궁합',
+      text: current.a + '님과 ' + current.b + '님은 전생에 ' + t + tail + '. 인연의 깊이 ' + current.bond.score + '%! 우리는 전생에 어떤 사이였을까?',
+      url: shareUrl()
+    });
+  }
+
+  $('shareBtn').addEventListener('click', share);
+  $('shareBtn2').addEventListener('click', share);
+  $('copyBtn').addEventListener('click', function () { S.copyLink(shareUrl()); });
+  $('againBtn').addEventListener('click', reset);
+  $('mineBtn').addEventListener('click', reset);
+
+  // 친구가 공유한 링크로 들어온 경우
+  (function fromLink() {
+    var p = new URLSearchParams(location.search);
+    var a = (p.get('a') || '').trim().slice(0, 10);
+    var b = (p.get('b') || '').trim().slice(0, 10);
+    var s = p.get('s') || '';
+    if (!a || !b || !/^[0-9a-z]{1,7}$/.test(s)) return;
+    var seed = parseInt(s, 36);
+    if (!isFinite(seed) || seed > 0xFFFFFFFF) return;
+    render(a, b, seed >>> 0, true);
+  })();
+})();
+</script>
+</body>
+</html>
