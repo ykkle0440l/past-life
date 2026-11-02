@@ -34,6 +34,7 @@
 <div class="page">
   <header class="site-head">
     <a class="wordmark" href="/">전생 거울</a>
+    <nav class="site-nav" aria-label="사이트 메뉴"><a href="/" aria-current="page">테스트</a><a href="/tarot/cards/">카드 의미</a><a href="/read/">읽을거리</a></nav>
   </header>
 
   <main>
@@ -49,11 +50,12 @@
       <form id="form" novalidate>
         <div class="field">
           <label for="name">이름</label>
-          <input id="name" name="name" type="text" maxlength="10" autocomplete="off" placeholder="예: 김하늘" required>
+          <input id="name" name="name" type="text" maxlength="10" autocomplete="off" enterkeyhint="next" placeholder="예: 김하늘" required>
         </div>
         <div class="field">
           <label for="birth">생년월일</label>
-          <input id="birth" name="birth" type="date" min="1900-01-01" required>
+          <input id="birth" name="birth" type="text" inputmode="numeric" autocomplete="bday" maxlength="10" enterkeyhint="go" placeholder="예: 19980417" aria-describedby="birthHint" required>
+          <small class="field-hint" id="birthHint">숫자 8자리로 입력해 주세요</small>
         </div>
         <p class="form-error" id="error" role="alert"></p>
         <button class="btn btn-primary" type="submit">거울 들여다보기</button>
@@ -116,7 +118,6 @@
 
       <div class="actions" id="ownActions">
         <button class="btn btn-primary" type="button" id="shareBtn">결과 공유하기</button>
-        <button class="btn btn-ghost" type="button" id="copyBtn">링크 복사</button>
         <button class="btn btn-text" type="button" id="againBtn">다른 사람 전생 보기</button>
       </div>
       <div class="actions" id="sharedActions" hidden>
@@ -137,6 +138,24 @@
       </aside>
     </section>
 
+    <!-- guide:start -->
+    <section class="guide" aria-labelledby="guideTitle">
+      <h2 id="guideTitle">전생 체험은 이렇게 봐요</h2>
+      <p>전생 거울은 입력한 이름과 생년월일을 하나의 숫자로 바꾼 뒤, 그 숫자에 맞는 전생 이야기를 골라 보여 줘요. 그래서 같은 이름과 생년월일을 넣으면 언제 해도 같은 결과가 나와요. 결과에는 그 생을 살았던 시대와 장소, 그 생의 이야기와 마지막 순간, 그리고 이번 생까지 이어진 흔적과 인연이 담겨 있어요.</p>
+      <p>거울에 비치는 전생은 사람의 삶 39가지와 동물의 삶 5가지예요. 고려의 포구부터 1920년대 파리의 카페까지, 실제 역사 속 장소와 직업을 바탕으로 한 사람 한 사람의 이야기를 직접 썼어요. 동물 전생은 열 명 가운데 한 명꼴로 나오는 드문 결과예요.</p>
+
+      <h2>거울에 비치는 전생들</h2>
+      <p>시대를 누르면 그 시대에 나올 수 있는 전생을 미리 볼 수 있어요. 결과에는 여기에 더해 그 생의 성격과 마지막 순간, 이번 생에 남은 흔적이 함께 나와요.</p>
+      <details><summary>고려 시대, 개경</summary><div><ul><li><strong>벽란도의 비단 상인</strong><br>송나라와 아라비아 배가 드나들던 벽란도 포구에서 비단과 향료를 사고팔았습니다. 낯선 나라 말을 가장 먼저 배우는 사람이 바로 당신이었습니다.</li><li><strong>청자를 굽던 도공</strong><br>가마 앞에서 비 갠 하늘빛 하나를 얻으려고 수천 번 불을 지폈습니다. 마음에 들지 않으면 아무리 아까워도 그릇을 깨뜨렸습니다.</li><li><strong>대장경을 새기던 판각승</strong><br>한 글자를 새길 때마다 절을 올리며 나무판에 경전을 새겼습니다. 수십 년 동안 단 한 글자도 틀리지 않았다고 전해집니다.</li></ul></div></details><details><summary>조선 후기, 한양</summary><div><ul><li><strong>도화서의 궁중 화원</strong><br>임금의 초상과 궁궐 잔치를 그리던 화원이었습니다. 붓끝 하나로 사람의 성품까지 그려 낸다는 칭찬을 들었습니다.</li><li><strong>종로의 이야기꾼 전기수</strong><br>담뱃가게 앞에 사람들을 모아 놓고 소설을 실감 나게 읽어 주던 이야기꾼이었습니다. 가장 아슬아슬한 대목에서 멈추면 사람들이 앞다투어 엽전을 던졌습니다.</li><li><strong>관상감의 천문관</strong><br>밤마다 별의 자리를 기록하고 일식이 언제 올지 셈하던 관리였습니다. 남들이 잠든 시간에 가장 바빴습니다.</li><li><strong>수라간의 대령숙수</strong><br>임금의 수라상을 책임지던 최고 요리사였습니다. 수라상에 남은 반찬만 보고도 그날 임금의 기분을 알아챘다고 합니다.</li></ul></div></details><details><summary>통일신라, 서라벌</summary><div><ul><li><strong>산천을 누비던 화랑</strong><br>이름난 산과 강을 찾아다니며 노래와 무예를 익히던 젊은 화랑이었습니다. 벗을 위해서라면 앞뒤 가리지 않았습니다.</li><li><strong>금관을 빚던 세공 장인</strong><br>얇은 금판을 두드리고 굽은 옥을 달아 왕의 관을 만들었습니다. 작은 금 조각 하나에도 며칠을 쏟았습니다.</li><li><strong>청해진 무역선의 항해사</strong><br>바다를 건너 당나라와 일본을 오가던 무역선의 항해사였습니다. 별과 바람만 보고도 뱃길을 읽었습니다.</li></ul></div></details><details><summary>고대 이집트, 테베</summary><div><ul><li><strong>신전의 서기관</strong><br>파피루스에 신들의 이름과 왕의 업적을 적던 서기관이었습니다. 글을 아는 사람이 드물던 시절, 마을 사람들의 편지도 대신 써 주었습니다.</li><li><strong>왕가의 계곡 석공</strong><br>깊은 계곡에서 왕의 무덤을 파던 석공이었습니다. 무덤이 어디 있는지 죽을 때까지 아무에게도 말하지 않았습니다.</li><li><strong>나일강의 뱃사공</strong><br>해마다 강물이 불어나는 계절이면 사람과 곡식을 실어 나르던 뱃사공이었습니다. 강물 색만 보고도 다음 날 날씨를 맞혔습니다.</li></ul></div></details><details><summary>르네상스, 피렌체</summary><div><ul><li><strong>거장 공방의 견습 화가</strong><br>이름난 거장의 공방에서 물감을 갈고 밑그림을 따라 그리던 견습생이었습니다. 스승이 당신 그림을 몰래 보고 웃었다는 이야기가 전해집니다.</li><li><strong>은행가 가문의 회계사</strong><br>피렌체에서 가장 부유한 가문의 장부를 맡았던 회계사였습니다. 숫자 하나 틀리는 법이 없어 모두가 당신을 믿었습니다.</li><li><strong>귀족들의 조향사</strong><br>꽃과 나무껍질, 향료를 섞어 귀족들의 향수를 만들던 조향사였습니다. 사람마다 어울리는 향을 단번에 알아봤습니다.</li></ul></div></details><details><summary>16세기, 베네치아</summary><div><ul><li><strong>무라노섬의 유리 장인</strong><br>기술이 새어 나갈까 봐 섬 밖으로 나가는 것조차 허락되지 않던 유리 장인이었습니다. 불 속에서 투명한 꽃을 피워 냈습니다.</li><li><strong>카니발의 가면 장인</strong><br>축제 때 사람들이 쓰는 가면을 만들던 장인이었습니다. 가면 뒤의 진짜 얼굴을 가장 많이 본 사람이었습니다.</li><li><strong>운하의 곤돌라 사공</strong><br>좁은 운하를 노 하나로 오가며 사랑을 고백하러 가는 사람들을 실어 나르던 사공이었습니다. 수많은 비밀 연애의 증인이었습니다.</li></ul></div></details><details><summary>에도 시대, 에도</summary><div><ul><li><strong>목판화를 새기던 판화가</strong><br>거리 풍경과 인기 배우들을 목판에 새겨 찍어 내던 판화가였습니다. 당신의 그림은 서민들의 방 한쪽을 밝혀 주었습니다.</li><li><strong>떠돌이 하이쿠 시인</strong><br>짧은 시 한 줄을 남기며 이 마을 저 마을을 떠돌던 시인이었습니다. 계절이 바뀌는 순간을 누구보다 먼저 알아챘습니다.</li><li><strong>골목 소바 가게 주인</strong><br>새벽마다 직접 면을 뽑던 작은 소바 가게 주인이었습니다. 단골손님 얼굴만 보고도 오늘 무슨 일이 있었는지 알았습니다.</li></ul></div></details><details><summary>13세기, 몽골 초원</summary><div><ul><li><strong>역참을 달리던 파발꾼</strong><br>말을 바꿔 타며 하루에 수백 리를 달려 칸의 명령을 전하던 파발꾼이었습니다. 당신이 늦으면 제국이 멈췄습니다.</li><li><strong>매를 길들이던 사냥꾼</strong><br>검독수리를 길들여 겨울 사냥을 나서던 사냥꾼이었습니다. 말 한마디 없이 눈빛만으로 매와 통했습니다.</li><li><strong>부족의 점술가</strong><br>불에 그을린 양의 뼈를 보고 앞날을 점치던 점술가였습니다. 부족장들도 중요한 결정 앞에서는 당신을 찾았습니다.</li></ul></div></details><details><summary>당나라, 장안</summary><div><ul><li><strong>실크로드 낙타 상단의 대상</strong><br>낙타 수십 마리를 이끌고 사막을 건너 서역과 장안을 오가던 상인이었습니다. 모래바람 속에서도 길을 잃지 않았습니다.</li><li><strong>궁정의 비파 연주자</strong><br>황제의 잔치에서 비파를 연주하던 악사였습니다. 당신의 연주가 시작되면 떠들썩하던 연회장이 조용해졌습니다.</li><li><strong>찻잎을 가리던 다인</strong><br>좋은 찻잎을 찾아 산을 오르고, 물맛까지 가려 가며 차를 우리던 다인이었습니다.</li></ul></div></details><details><summary>빅토리아 시대, 런던</summary><div><ul><li><strong>가스등을 켜던 점등원</strong><br>해 질 녘마다 긴 장대를 들고 거리의 가스등을 하나씩 밝히던 점등원이었습니다. 안개 낀 밤길은 당신 덕분에 안전했습니다.</li><li><strong>탐정 소설을 쓰던 무명 작가</strong><br>하숙집 다락방에서 밤새 탐정 소설을 쓰던 작가였습니다. 끝내 유명해지지는 못했지만 몇몇 독자는 당신의 다음 편을 손꼽아 기다렸습니다.</li><li><strong>세계를 누비던 식물 채집가</strong><br>세계 곳곳을 돌며 희귀한 식물을 모아 식물원으로 보내던 채집가였습니다.</li></ul></div></details><details><summary>바이킹 시대, 노르웨이 피오르</summary><div><ul><li><strong>영웅담을 읊던 음유시인</strong><br>긴 겨울밤, 불가에 모인 사람들에게 영웅들의 이야기를 시로 읊어 주던 음유시인이었습니다.</li><li><strong>긴 배의 키잡이</strong><br>거친 북해를 건너는 긴 배의 키를 잡던 키잡이였습니다. 폭풍 속에서도 당신만은 침착했습니다.</li><li><strong>룬 문자를 새기던 대장장이</strong><br>칼과 도끼를 벼리고 그 위에 지켜 주는 룬 문자를 새기던 대장장이였습니다.</li></ul></div></details><details><summary>잉카 제국, 쿠스코</summary><div><ul><li><strong>매듭으로 기록하던 기록관</strong><br>글자 대신 색실과 매듭으로 제국의 인구와 곡식을 기록하던 기록관이었습니다. 매듭 하나만 만져 봐도 무엇을 뜻하는지 알았습니다.</li><li><strong>태양 신전의 사제</strong><br>해마다 해가 가장 짧은 날이면 태양을 맞이하는 제사를 이끌던 사제였습니다. 사람들은 당신의 목소리에서 희망을 들었습니다.</li><li><strong>산비탈 계단밭의 농부</strong><br>가파른 산비탈에 돌을 쌓아 계단밭을 만들고 감자와 옥수수를 길렀습니다. 당신이 쌓은 돌담은 수백 년을 버텼습니다.</li></ul></div></details><details><summary>1920년대, 파리</summary><div><ul><li><strong>카페의 재즈 피아니스트</strong><br>몽마르트르 언덕 아래 작은 카페에서 밤마다 재즈를 연주하던 피아니스트였습니다. 화가와 시인들이 당신 연주를 들으러 모였습니다.</li><li><strong>모자 가게의 디자이너</strong><br>파리 사람들이 줄 서서 사 가던 모자를 디자인하던 디자이너였습니다. 유행을 따르지 않고 유행을 만들었습니다.</li></ul></div></details><details><summary>드물게 나오는 동물 전생</summary><div><ul><li><strong>궁궐 처마 밑의 고양이</strong> (조선 후기, 한양 궁궐)<br>궁궐 처마 밑에 살며 임금의 사랑을 듬뿍 받던 고양이였습니다. 신하들도 당신 앞에서는 발소리를 낮췄습니다.</li><li><strong>신전의 신성한 고양이</strong> (고대 이집트, 여신의 신전)<br>여신의 사자로 여겨져 신전에서 극진한 대접을 받던 고양이였습니다. 사람들은 당신 앞에서 고개를 숙였습니다.</li><li><strong>산사 연못의 늙은 거북이</strong> (고려 시대, 깊은 산사)<br>깊은 산 절 마당의 연못에서 백 년 넘게 살던 거북이였습니다. 수많은 사람이 당신 앞에서 소원을 빌었습니다.</li><li><strong>칸이 아끼던 백마</strong> (13세기, 몽골 초원)<br>초원에서 가장 빠르다고 소문난 하얀 말이었습니다. 칸은 어디를 가든 당신만 믿었습니다.</li><li><strong>헌책방의 터줏대감 고양이</strong> (빅토리아 시대, 런던)<br>오래된 헌책방 창가에서 손님들을 맞이하던 고양이였습니다. 책보다 당신을 보러 오는 손님이 더 많았습니다.</li></ul></div></details>
+
+      <h2>자주 묻는 질문</h2>
+      <details><summary>같은 이름이면 결과가 모두 같나요?</summary><div><p>이름과 생년월일을 함께 보기 때문에, 이름이 같아도 생년월일이 다르면 다른 전생이 나와요. 반대로 같은 이름과 생년월일을 넣으면 언제나 같은 결과가 나와요.</p></div></details><details><summary>생년월일은 어떻게 입력하나요?</summary><div><p>1998년 4월 17일생이라면 19980417처럼 숫자 8자리로 입력하면 돼요. 980417처럼 6자리로 입력해도 알아서 읽어요.</p></div></details><details><summary>입력한 이름과 생년월일은 저장되나요?</summary><div><p>아니요. 계산은 지금 쓰고 있는 휴대폰이나 컴퓨터 안에서만 이루어지고, 서버로 보내거나 저장하지 않아요. 결과를 공유하면 링크에 이름과 결과 번호만 담기고, 생년월일은 담기지 않아요.</p></div></details><details><summary>결과는 믿어도 되나요?</summary><div><p>전생 체험은 재미로 즐기는 놀이예요. 결과에 나온 이야기는 지난 삶을 증명하는 것이 아니라, 다른 시대의 나를 상상해 보는 작은 이야기로 봐 주세요.</p></div></details>
+
+      <h2>더 읽어 보기</h2>
+      <ul class="read-list"><li><a href="/read/mirror-of-karma/">지난 삶을 비추는 거울, 업경대 이야기<small>전생 거울이라는 이름은 옛이야기 속 업경대에서 왔어요. 저승의 거울 업경대가 어떤 거울인지 알아봐요.</small></a></li><li><a href="/read/past-life-jobs/">전생 결과에 나오는 옛 직업들, 실제로 있었을까?<small>벽란도의 상인, 조선의 전기수, 관상감의 천문관까지. 전생 결과에 나오는 직업들의 실제 역사를 소개해요.</small></a></li><li><a href="/read/reincarnation/">사람들은 왜 전생을 궁금해할까: 윤회와 전생 이야기<small>돌고 도는 삶, 윤회는 어디서 온 생각일까요? 동양과 서양의 전생 이야기와 우리가 전생 테스트를 즐기는 이유를 정리했어요.</small></a></li></ul>
+    </section>
+    <!-- guide:end -->
+
     <nav class="more" aria-label="다른 테스트">
       <h2 class="more-title">다른 테스트도 해 보세요</h2>
       <a class="more-item" href="/bond/">
@@ -152,7 +171,7 @@
 
   <footer class="site-foot">
     <p>재미로 보는 전생체험이에요. 입력한 이름과 생년월일은 어디에도 저장되지 않아요.</p>
-    <p><a href="/">전체 테스트</a> &nbsp; <a href="/privacy.html">개인정보처리방침</a></p>
+    <p class="foot-links"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy.html">개인정보처리방침</a></p>
   </footer>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -317,7 +336,7 @@
   var form = $('form'), nameEl = $('name'), birthEl = $('birth'), errorEl = $('error');
   var current = null;
 
-  birthEl.max = S.todayKey();
+  S.birthInput(birthEl);
 
   function show(state) {
     document.body.dataset.state = state;
@@ -400,13 +419,13 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var name = nameEl.value.trim();
-    var birth = birthEl.value;
+    var birth = S.parseBirth(birthEl.value);
     if (!name) { errorEl.textContent = '이름을 입력해 주세요.'; nameEl.focus(); return; }
-    if (!birth) { errorEl.textContent = '생년월일을 선택해 주세요.'; birthEl.focus(); return; }
-    if (birth > birthEl.max) { errorEl.textContent = '생년월일은 오늘 이전 날짜로 골라 주세요.'; birthEl.focus(); return; }
+    if (birth.empty) { errorEl.textContent = '생년월일을 입력해 주세요. 예: 19980417'; birthEl.focus(); return; }
+    if (birth.error) { errorEl.textContent = birth.error; birthEl.focus(); return; }
     errorEl.textContent = '';
     nameEl.blur(); birthEl.blur();
-    gaze(name, birth);
+    gaze(name, birth.iso);
   });
 
   function reset() {
@@ -429,7 +448,6 @@
 
   $('shareBtn').addEventListener('click', share);
   $('shareBtn2').addEventListener('click', share);
-  $('copyBtn').addEventListener('click', function () { S.copyLink(shareUrl()); });
   $('againBtn').addEventListener('click', reset);
   $('mineBtn').addEventListener('click', reset);
 

@@ -104,15 +104,6 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 .person legend { font-family: var(--display); font-size: 1.05rem; color: var(--brass); padding: 0; margin-bottom: 8px; }
 .person-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .person-row .field input { padding: 0 12px; }
-.about {
-  margin-top: 36px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(233,228,216,.12);
-  color: var(--moon-dim);
-  font-size: .92rem;
-}
-.about h2 { font-family: var(--display); font-weight: 400; font-size: 1.1rem; color: #F4EFE3; margin: 0 0 6px; }
-.about p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   body[data-state="gazing"] .thread { transition: none; }
   body[data-state="gazing"] .knot { animation: none; }
@@ -124,6 +115,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 <div class="page">
   <header class="site-head">
     <a class="wordmark" href="/">전생 거울</a>
+    <nav class="site-nav" aria-label="사이트 메뉴"><a href="/" aria-current="page">테스트</a><a href="/tarot/cards/">카드 의미</a><a href="/read/">읽을거리</a></nav>
   </header>
 
   <main>
@@ -154,7 +146,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
           </div>
           <div class="field">
             <label for="birthA">생년월일 <small>(선택)</small></label>
-            <input id="birthA" type="date" min="1900-01-01">
+            <input id="birthA" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="예: 19980417">
           </div>
         </div>
       </fieldset>
@@ -167,10 +159,11 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
           </div>
           <div class="field">
             <label for="birthB">생년월일 <small>(선택)</small></label>
-            <input id="birthB" type="date" min="1900-01-01">
+            <input id="birthB" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="예: 19980417">
           </div>
         </div>
       </fieldset>
+      <p class="field-hint">생년월일은 숫자 8자리로 입력하고, 몰라도 이름만으로 볼 수 있어요</p>
       <p class="form-error" id="error" role="alert"></p>
       <button class="btn btn-primary" type="submit">인연 확인하기</button>
     </form>
@@ -230,7 +223,6 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 
       <div class="actions" id="ownActions">
         <button class="btn btn-primary" type="button" id="shareBtn">결과 공유하기</button>
-        <button class="btn btn-ghost" type="button" id="copyBtn">링크 복사</button>
         <button class="btn btn-text" type="button" id="againBtn">다른 사람과 보기</button>
       </div>
       <div class="actions" id="sharedActions" hidden>
@@ -251,10 +243,26 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
       </aside>
     </section>
 
-    <section class="about" id="about">
+    <!-- guide:start -->
+    <section class="guide" aria-labelledby="guideTitle">
+      <h2 id="guideTitle">전생의 인연 궁합은 이렇게 봐요</h2>
+      <p>두 사람의 이름을 거울에 비추면, 두 사람이 전생에 어떤 사이였는지와 인연의 깊이를 보여 드려요. 결과에는 그 생의 이야기, 이번 생에 다시 만난 이유, 잘 맞는 점과 조심할 점, 그리고 두 사람에게 건네는 한마디가 담겨 있어요.</p>
+      <p>이름 순서를 바꿔 넣어도 결과는 같아요. 생년월일은 넣지 않아도 되지만, 같은 이름이 많을 때 넣으면 두 사람만의 결과를 볼 수 있어요. 연인뿐 아니라 친구, 가족, 동료와의 인연도 볼 수 있어요.</p>
+
       <h2>붉은 실 이야기</h2>
-      <p>옛이야기 속 월하노인은 인연이 닿을 두 사람의 발목을 보이지 않는 붉은 실로 묶어 둔다고 해요. 이 실은 멀리 떨어져 있어도, 생이 바뀌어도 끊어지지 않는다고 전해져요. 연인뿐 아니라 친구, 가족, 동료와의 인연도 볼 수 있어요.</p>
+      <p>옛이야기 속 월하노인은 인연이 닿을 두 사람의 발목을 보이지 않는 붉은 실로 묶어 둔다고 해요. 이 실은 멀리 떨어져 있어도, 생이 바뀌어도 끊어지지 않는다고 전해져요. 결과 화면에서 두 이름 사이를 잇는 붉은 실도 이 이야기에서 가져왔어요. <a href="/read/red-thread/">월하노인 이야기 더 읽기</a></p>
+
+      <h2>나올 수 있는 인연 14가지</h2>
+      <p>화랑 동무부터 앙숙 가게 주인까지, 두 사람의 전생 인연은 이 가운데 하나로 나와요.</p>
+      <details><summary>함께 산천을 누비던 화랑 동무</summary><div><p>통일신라, 서라벌. 인연의 깊이 92~99%, 한 단어로는 ‘단짝’.</p><p>두 사람은 같은 해에 화랑이 되어 이름난 산과 강을 함께 누볐습니다. 위험한 순간마다 서로의 등을 맡겼고, 한 사람이 다치면 다른 한 사람이 업고 산을 내려왔습니다.</p></div></details><details><summary>담장을 사이에 둔 이웃집 연인</summary><div><p>조선 후기, 한양 북촌. 인연의 깊이 85~97%, 한 단어로는 ‘애틋함’.</p><p>두 사람은 담장 하나를 사이에 두고 자랐습니다. 담 너머로 몰래 편지를 주고받았지만, 집안의 반대로 끝내 맺어지지 못했습니다.</p></div></details><details><summary>청자 가마의 스승과 제자</summary><div><p>고려 시대, 강진 가마터. 인연의 깊이 78~92%, 한 단어로는 ‘배움’.</p><p>한 사람은 이름난 도공이었고, 다른 한 사람은 그 곁에서 흙을 고르던 제자였습니다. 스승은 엄했지만, 제자가 처음으로 비색을 얻던 날 몰래 눈물을 훔쳤습니다.</p></div></details><details><summary>리알토 다리의 맞수 상인</summary><div><p>16세기, 베네치아 리알토. 인연의 깊이 64~80%, 한 단어로는 ‘자극’.</p><p>두 사람은 같은 다리 위에서 향신료를 팔던 맞수였습니다. 평생 손님을 두고 다퉜지만, 늘그막에는 같은 술집에 나란히 앉아 웃었습니다.</p></div></details><details><summary>폭풍 속 같은 배를 탄 선원</summary><div><p>바이킹 시대, 북해. 인연의 깊이 80~94%, 한 단어로는 ‘은혜’.</p><p>거센 폭풍이 배를 덮친 밤, 바다에 빠진 다른 한 사람을 한 사람이 밧줄 하나로 끌어올렸습니다. 그날 이후 두 사람은 어떤 항해든 함께했습니다.</p></div></details><details><summary>한 지붕 아래 자란 형제자매</summary><div><p>잉카 제국, 쿠스코. 인연의 깊이 82~95%, 한 단어로는 ‘편안함’.</p><p>두 사람은 산비탈 작은 집에서 함께 자란 형제자매였습니다. 낮에는 감자밭에서 함께 일하고, 밤이면 같은 담요를 덮고 별을 셌습니다.</p></div></details><details><summary>헌책방 주인과 창가의 고양이</summary><div><p>빅토리아 시대, 런던. 인연의 깊이 75~90%, 한 단어로는 ‘집사’.</p><p>한 사람은 오래된 헌책방의 주인이었고, 다른 한 사람은 그 책방 창가에서 낮잠을 자던 고양이였습니다. 주인은 손님보다 고양이 밥을 먼저 챙겼습니다.</p></div></details><details><summary>사막을 함께 건넌 상단 동료</summary><div><p>당나라, 실크로드. 인연의 깊이 77~91%, 한 단어로는 ‘길동무’.</p><p>두 사람은 같은 상단에서 낙타를 몰며 사막을 건넜습니다. 모래폭풍에 길을 잃었을 때, 서로의 목소리만 듣고 다시 만났습니다.</p></div></details><details><summary>임금과 끝까지 곁을 지킨 신하</summary><div><p>조선 후기, 한양 궁궐. 인연의 깊이 70~88%, 한 단어로는 ‘믿음’.</p><p>한 사람은 나라를 다스리던 임금이었고, 다른 한 사람은 모두가 등을 돌린 날에도 곁을 떠나지 않은 신하였습니다.</p></div></details><details><summary>편지로만 만난 펜팔</summary><div><p>1920년대, 파리와 경성. 인연의 깊이 80~93%, 한 단어로는 ‘그리움’.</p><p>두 사람은 바다 건너로 편지만 주고받았습니다. 수십 통의 편지에 서로의 모든 것을 털어놓았지만, 끝내 얼굴을 보지 못했습니다.</p></div></details><details><summary>골목을 사이에 둔 앙숙 가게 주인</summary><div><p>에도 시대, 에도. 인연의 깊이 58~74%, 한 단어로는 ‘티격태격’.</p><p>두 사람은 좁은 골목을 사이에 두고 마주 본 가게 주인이었습니다. 날마다 티격태격했지만, 한쪽 가게가 문을 닫던 날 다른 한 사람이 가장 오래 울었습니다.</p></div></details><details><summary>함께 합주하던 궁정 악사</summary><div><p>당나라, 장안 궁궐. 인연의 깊이 84~96%, 한 단어로는 ‘조화’.</p><p>한 사람은 비파를, 한 사람은 피리를 연주하던 궁정 악사였습니다. 두 사람이 함께 연주하면 황제도 잔을 내려놓고 귀를 기울였습니다.</p></div></details><details><summary>적으로 만나 의형제가 된 전사</summary><div><p>13세기, 몽골 초원. 인연의 깊이 68~85%, 한 단어로는 ‘반전’.</p><p>두 사람은 서로 다른 부족의 전사로 처음 만났습니다. 사흘 밤낮을 겨룬 끝에 서로를 인정했고, 그날 의형제를 맺었습니다.</p></div></details><details><summary>밤새 별을 세던 천문관 동료</summary><div><p>조선 후기, 관상감. 인연의 깊이 72~86%, 한 단어로는 ‘잔잔함’.</p><p>두 사람은 같은 관청에서 밤마다 별을 기록하던 동료였습니다. 긴 밤을 함께 새우며 말없이 같은 하늘을 올려다봤습니다.</p></div></details>
+
+      <h2>자주 묻는 질문</h2>
+      <details><summary>이름 순서를 바꾸면 결과가 달라지나요?</summary><div><p>아니요. 누구 이름을 먼저 쓰든 같은 결과가 나와요. 다만 스승과 제자처럼 역할이 있는 인연에서는 누가 어떤 역할이었는지도 함께 알려 드려요.</p></div></details><details><summary>인연의 깊이가 낮으면 안 맞는 사이인가요?</summary><div><p>그렇지 않아요. 맞수나 앙숙처럼 서로 부딪히는 인연은 숫자가 조금 낮게 나오지만, 그만큼 서로를 자극하고 키워 주는 사이라는 뜻이기도 해요.</p></div></details><details><summary>생년월일은 어떻게 입력하나요?</summary><div><p>19980417처럼 숫자 8자리로 입력하면 돼요. 몰라도 괜찮아요. 이름만으로도 결과를 볼 수 있어요.</p></div></details><details><summary>입력한 정보는 저장되나요?</summary><div><p>아니요. 계산은 지금 쓰고 있는 기기 안에서만 이루어지고, 서버로 보내거나 저장하지 않아요. 공유 링크에는 두 사람의 이름과 결과 번호만 담겨요.</p></div></details>
+
+      <h2>더 읽어 보기</h2>
+      <ul class="read-list"><li><a href="/read/red-thread/">보이지 않는 붉은 실, 월하노인 이야기<small>인연이 닿을 사람은 붉은 실로 이어져 있다는 이야기는 어디서 왔을까요? 당나라 옛이야기 속 월하노인을 만나 봐요.</small></a></li><li><a href="/read/reincarnation/">사람들은 왜 전생을 궁금해할까: 윤회와 전생 이야기<small>돌고 도는 삶, 윤회는 어디서 온 생각일까요? 동양과 서양의 전생 이야기와 우리가 전생 테스트를 즐기는 이유를 정리했어요.</small></a></li></ul>
     </section>
+    <!-- guide:end -->
 
     <nav class="more" aria-label="다른 테스트">
       <h2 class="more-title">다른 테스트도 해 보세요</h2>
@@ -271,7 +279,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 
   <footer class="site-foot">
     <p>재미로 보는 궁합이에요. 입력한 이름과 생년월일은 어디에도 저장되지 않아요.</p>
-    <p><a href="/">전체 테스트</a> &nbsp; <a href="/privacy.html">개인정보처리방침</a></p>
+    <p class="foot-links"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy.html">개인정보처리방침</a></p>
   </footer>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -375,7 +383,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
   var form = $('form'), errorEl = $('error');
   var nameA = $('nameA'), nameB = $('nameB'), birthA = $('birthA'), birthB = $('birthB');
   var current = null;
-  birthA.max = birthB.max = S.todayKey();
+  S.birthInput(birthA); S.birthInput(birthB);
 
   function setBubble(el, name, fallback) {
     el.textContent = name || fallback;
@@ -389,7 +397,6 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
   function show(state) {
     document.body.dataset.state = state;
     $('intro').hidden = state !== 'intro';
-    $('about').hidden = state !== 'intro';
     form.hidden = state !== 'intro';
     $('gazing').hidden = state !== 'gazing';
     $('result').hidden = state !== 'result';
@@ -484,12 +491,12 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
     var a = nameA.value.trim(), b = nameB.value.trim();
     if (!a) { errorEl.textContent = '내 이름을 입력해 주세요.'; nameA.focus(); return; }
     if (!b) { errorEl.textContent = '상대 이름을 입력해 주세요.'; nameB.focus(); return; }
-    if ((birthA.value && birthA.value > birthA.max) || (birthB.value && birthB.value > birthB.max)) {
-      errorEl.textContent = '생년월일은 오늘 이전 날짜로 골라 주세요.'; return;
-    }
+    var da = S.parseBirth(birthA.value), db = S.parseBirth(birthB.value);
+    if (da.error) { errorEl.textContent = '내 ' + da.error; birthA.focus(); return; }
+    if (db.error) { errorEl.textContent = '상대 ' + db.error; birthB.focus(); return; }
     errorEl.textContent = '';
     document.activeElement && document.activeElement.blur();
-    gaze(a, birthA.value, b, birthB.value);
+    gaze(a, da.iso || '', b, db.iso || '');
   });
 
   function reset() {
@@ -516,7 +523,6 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 
   $('shareBtn').addEventListener('click', share);
   $('shareBtn2').addEventListener('click', share);
-  $('copyBtn').addEventListener('click', function () { S.copyLink(shareUrl()); });
   $('againBtn').addEventListener('click', reset);
   $('mineBtn').addEventListener('click', reset);
 
