@@ -32,38 +32,40 @@
 <style>
 .intro { padding-top: 30px; }
 .deck {
-  --fan: 1;
   position: relative;
-  height: 240px;
-  margin: 4px 0 0;
+  height: 236px;
+  margin: 4px -16px 0;
   transition: height .6s ease;
 }
-.deck.is-chosen { height: 296px; }
+.deck.is-chosen { height: 290px; }
 .tcard {
   --x: 0; --y: 0; --r: 0;
   position: absolute;
   left: 50%;
-  top: 22px;
-  width: 104px;
-  height: 178px;
-  margin-left: -52px;
+  top: 26px;
+  width: 96px;
+  height: 164px;
+  margin-left: -48px;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
   perspective: 900px;
-  transform-origin: 50% 130%;
-  transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px)) rotate(calc(var(--r) * var(--fan) * 1deg));
+  transform-origin: 50% 60%;
+  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px)) rotate(calc(var(--r) * 1deg));
   transition: transform .6s cubic-bezier(.3,.8,.3,1), opacity .4s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.deck:not(.is-chosen) .tcard:active { transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px - 14px)) rotate(calc(var(--r) * var(--fan) * 1deg)); }
+.deck:not(.is-chosen) .tcard:active { transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 12px)) rotate(calc(var(--r) * 1deg)); }
+@media (hover: hover) {
+  .deck:not(.is-chosen) .tcard:hover { transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 12px)) rotate(calc(var(--r) * 1deg)); }
+}
 .deck.is-chosen .tcard:not(.is-picked) {
   opacity: 0;
   pointer-events: none;
-  transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px + 60px)) rotate(calc(var(--r) * var(--fan) * 1deg));
+  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px + 60px)) rotate(calc(var(--r) * 1deg));
 }
-.tcard.is-picked { z-index: 5; cursor: default; transform: translate(0, 98px) scale(1.45); }
+.tcard.is-picked { z-index: 5; cursor: default; transform: translate(0, 48px) scale(1.55); }
 .tcard-inner {
   position: absolute;
   inset: 0;
@@ -92,9 +94,9 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 46px;
-  height: 46px;
-  margin: -23px 0 0 -23px;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
   border-radius: 50%;
   background: radial-gradient(circle at 36% 30%, #4a5d93, #1d2747 75%);
   box-shadow: 0 0 0 2px var(--brass), 0 0 0 5px #1d2747, 0 0 0 6px rgba(200,164,94,.5);
@@ -112,13 +114,10 @@
 }
 .tface-num { font-family: var(--display); font-size: .78rem; line-height: 1; margin-top: 3px; color: var(--seal); }
 .tface-art { flex: 1; width: 100%; display: grid; place-items: center; }
-.tface-art svg { width: 74px; height: 74px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tface-art svg { width: 68px; height: 68px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .tface-name { font-family: var(--display); font-size: .9rem; line-height: 1.2; text-align: center; }
 .tface-en { font-size: .5rem; color: var(--ink-soft); margin: 2px 0 4px; letter-spacing: .04em; }
 .deck-hint { text-align: center; color: var(--moon-dim); font-size: .9rem; margin: 0; min-height: 1.6em; }
-@media (max-width: 370px) {
-  .deck { --fan: .62; }
-}
 @media (prefers-reduced-motion: reduce) {
   .tcard, .tcard-inner, .deck { transition: none; }
 }
@@ -411,14 +410,30 @@
     return '<svg viewBox="0 0 100 100" aria-hidden="true">' + card.art + (card.artExtra ? card.artExtra() : '') + '</svg>';
   }
 
+  // 카드 7장을 화면 너비에 맞춰 최대한 넓게 펼쳐요 (카드 폭 96px, 기울어진 모서리 여유 40px)
+  function fanStep() {
+    var w = deck.clientWidth || 350;
+    return Math.max(24, Math.min(46, (w - 96 - 40) / 6));
+  }
+
+  function placeCard(btn, k, step) {
+    btn.style.setProperty('--x', Math.round(k * step));
+    btn.style.setProperty('--y', Math.round(k * k * 2.4));
+    btn.style.setProperty('--r', k * 4);
+  }
+
+  window.addEventListener('resize', function () {
+    if (deck.classList.contains('is-chosen')) return;
+    var step = fanStep();
+    Array.prototype.forEach.call(deck.querySelectorAll('.tcard'), function (btn, pos) { placeCard(btn, pos - 3, step); });
+  });
+
   function makeCard(pos, cardIdx) {
     var k = pos - 3;
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'tcard';
-    btn.style.setProperty('--x', k * 18);
-    btn.style.setProperty('--y', Math.abs(k) * 4);
-    btn.style.setProperty('--r', k * 6);
+    placeCard(btn, k, fanStep());
     btn.setAttribute('aria-label', (pos + 1) + '번째 카드 고르기');
     btn.innerHTML = '<span class="tcard-inner"><span class="tback"></span><span class="tface"></span></span>';
     btn.dataset.card = cardIdx;
