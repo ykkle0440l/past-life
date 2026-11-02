@@ -9,6 +9,7 @@ python3 _build/build.py 로 실행하면
 (_build 폴더는 밑줄로 시작해서 GitHub Pages 에는 올라가지 않아요.)
 """
 import datetime
+import hashlib
 import html
 import json
 import pathlib
@@ -292,19 +293,23 @@ def mirror_markup(main=True):
     for k in range(8):
         big = k % 2 == 0
         d = 'M150 1L154.5 8L150 15L145.5 8Z' if big else 'M150 4L152.6 8L150 12L147.4 8Z'
-        gems.append(f'<path class="rim-gem{"" if big else " sm"}" d="{d}" transform="rotate({k * 45} 150 150)"/>')
-        gems.append(f'<circle class="rim-gem sm" cx="150" cy="8" r="1.3" transform="rotate({k * 45 + 22.5} 150 150)"/>')
-    rim = ('<svg class="mirror-rim" viewBox="0 0 300 300">'
-           '<circle class="rim-line" cx="150" cy="150" r="128"/>'
-           '<circle class="rim-ticks" cx="150" cy="150" r="135" stroke-dasharray="1.3 10.48"/>'
-           '<circle class="rim-line" cx="150" cy="150" r="142"/>' + ''.join(gems) + '</svg>')
-    stars = ''.join(f'<circle class="star" cx="{x}" cy="{y}" r="{r}" style="animation-delay:{(i * 0.53) % 3.6:.2f}s"/>'
+        gems.append(f'<path class="rim-gem{"" if big else " sm"}" fill="#C8A45E" d="{d}" transform="rotate({k * 45} 150 150)"/>')
+        gems.append(f'<circle class="rim-gem sm" fill="#C8A45E" cx="150" cy="8" r="1.3" transform="rotate({k * 45 + 22.5} 150 150)"/>')
+    line = 'fill="none" stroke="#C8A45E" stroke-opacity=".5" stroke-width=".8"'
+    rim = ('<svg class="mirror-rim" viewBox="0 0 300 300" width="0" height="0">'
+           f'<circle class="rim-line" {line} cx="150" cy="150" r="128"/>'
+           '<circle class="rim-ticks" fill="none" stroke="#C8A45E" stroke-opacity=".55" stroke-width="5" '
+           'cx="150" cy="150" r="135" stroke-dasharray="1.3 10.48"/>'
+           f'<circle class="rim-line" {line} cx="150" cy="150" r="142"/>' + ''.join(gems) + '</svg>')
+    stars = ''.join(f'<circle class="star" fill="#F4EFE3" cx="{x}" cy="{y}" r="{r}" style="animation-delay:{(i * 0.53) % 3.6:.2f}s"/>'
                     for i, (x, y, r) in enumerate(STARS))
     sparks = ''.join(
-        f'<path class="spark" d="M{x} {y - s}Q{x} {y} {x + s} {y}Q{x} {y} {x} {y + s}Q{x} {y} {x - s} {y}Q{x} {y} {x} {y - s}Z" '
+        f'<path class="spark" fill="#F6DFA6" d="M{x} {y - s}Q{x} {y} {x + s} {y}Q{x} {y} {x} {y + s}Q{x} {y} {x - s} {y}Q{x} {y} {x} {y - s}Z" '
         f'style="animation-delay:{i * 1.4:.1f}s"/>'
         for i, (x, y, s) in enumerate(SPARKS))
-    sky = f'<svg class="mirror-sky" viewBox="0 0 100 100"><circle class="ring" cx="50" cy="50" r="44"/>{stars}{sparks}</svg>'
+    sky = ('<svg class="mirror-sky" viewBox="0 0 100 100" width="0" height="0">'
+           '<circle class="ring" fill="none" stroke="#E9E4D8" stroke-opacity=".16" stroke-width=".35" cx="50" cy="50" r="44"/>'
+           f'{stars}{sparks}</svg>')
     ripples = '<span class="ripple"></span>' * 3 if main else ''
     mid = ' id="mirror"' if main else ''
     return (f'      <div class="mirror-wrap" aria-hidden="true">\n'
@@ -500,6 +505,24 @@ def build_sitemap(cards):
     return len(paths)
 
 
+def stamp_assets():
+    """site.css, site.js 주소 뒤에 ?v=내용해시 를 붙여요. 파일이 바뀌면 주소도 바뀌어 캐시 문제가 없어요."""
+    versions = {name: hashlib.sha1(read(f'assets/{name}').encode('utf-8')).hexdigest()[:10]
+                for name in ('site.css', 'site.js')}
+    count = 0
+    for path in ROOT.rglob('*.html'):
+        if '_build' in path.parts or '.git' in path.parts:
+            continue
+        s = path.read_text(encoding='utf-8')
+        new = s
+        for name, v in versions.items():
+            new = re.sub(r'/assets/' + re.escape(name) + r'(\?v=[0-9a-f]+)?"', f'/assets/{name}?v={v}"', new)
+        if new != s:
+            path.write_text(new, encoding='utf-8')
+        count += 1
+    return versions, count
+
+
 def main():
     lives, animals, types, cards = load_data()
     inject_guide('past-life/index.html', guide_pastlife(lives, animals))
@@ -516,6 +539,8 @@ def main():
     build_privacy()
     build_404()
     n = build_sitemap(cards)
+    versions, pages = stamp_assets()
+    print('assets', versions, 'pages', pages)
     print(f'ok: lives={sum(len(l["roles"]) for l in lives)} animals={len(animals)} bonds={len(types)} cards={len(cards)} '
           f'articles={len(ARTICLES)} sitemap={n}')
 

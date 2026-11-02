@@ -145,7 +145,7 @@
 
   function item(kind, label, bg, icon, isLink) {
     var tag = isLink ? 'a' : 'button';
-    var attrs = isLink ? ' target="_blank" rel="noopener"' : ' type="button"';
+    var attrs = !isLink ? ' type="button"' : (kind === 'sms' ? '' : ' target="_blank" rel="noopener"');
     return '<' + tag + ' class="share-item" data-kind="' + kind + '"' + attrs + '>' +
       '<span class="share-icon" style="background:' + bg + '">' + icon + '</span>' + label + '</' + tag + '>';
   }

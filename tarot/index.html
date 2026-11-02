@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v=79f1a2c45e">
 
 <!-- 구글 애드센스 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8262915217195031"
@@ -32,6 +32,7 @@
 <style>
 .intro { padding-top: 30px; }
 .deck {
+  --fan: 1;
   position: relative;
   height: 240px;
   margin: 4px 0 0;
@@ -52,15 +53,15 @@
   cursor: pointer;
   perspective: 900px;
   transform-origin: 50% 130%;
-  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px)) rotate(calc(var(--r) * 1deg));
+  transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px)) rotate(calc(var(--r) * var(--fan) * 1deg));
   transition: transform .6s cubic-bezier(.3,.8,.3,1), opacity .4s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.deck:not(.is-chosen) .tcard:active { transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 14px)) rotate(calc(var(--r) * 1deg)); }
+.deck:not(.is-chosen) .tcard:active { transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px - 14px)) rotate(calc(var(--r) * var(--fan) * 1deg)); }
 .deck.is-chosen .tcard:not(.is-picked) {
   opacity: 0;
   pointer-events: none;
-  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px + 60px)) rotate(calc(var(--r) * 1deg));
+  transform: translate(calc(var(--x) * var(--fan) * 1px), calc(var(--y) * 1px + 60px)) rotate(calc(var(--r) * var(--fan) * 1deg));
 }
 .tcard.is-picked { z-index: 5; cursor: default; transform: translate(0, 98px) scale(1.45); }
 .tcard-inner {
@@ -115,6 +116,9 @@
 .tface-name { font-family: var(--display); font-size: .9rem; line-height: 1.2; text-align: center; }
 .tface-en { font-size: .5rem; color: var(--ink-soft); margin: 2px 0 4px; letter-spacing: .04em; }
 .deck-hint { text-align: center; color: var(--moon-dim); font-size: .9rem; margin: 0; min-height: 1.6em; }
+@media (max-width: 370px) {
+  .deck { --fan: .62; }
+}
 @media (prefers-reduced-motion: reduce) {
   .tcard, .tcard-inner, .deck { transition: none; }
 }
@@ -241,7 +245,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="/assets/site.js"></script>
+<script src="/assets/site.js?v=7a77368cf0"></script>
 <script>
 (function () {
   'use strict';
