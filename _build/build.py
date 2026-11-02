@@ -102,7 +102,7 @@ def header(current=None):
             '  </header>')
 
 
-def page(path, title, desc, main, og='/og.png', current=None, kind='article',
+def page(path, title, desc, main, og='/share.png', current=None, kind='article',
          note='모든 결과와 해석은 재미로 즐겨 주세요.', ads=True):
     url = SITE + path
     return f'''<!doctype html>
@@ -122,7 +122,7 @@ def page(path, title, desc, main, og='/og.png', current=None, kind='article',
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}{og}">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:height" content="600">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -280,6 +280,50 @@ def fix_chrome(rel, current):
     write(rel, s)
 
 
+# ── 거울 ─────────────────────────────────────────────
+STARS = [(22, 30, .9), (35, 17, .6), (78, 36, .7), (18, 56, .7), (48, 40, .5), (58, 63, .8),
+         (73, 71, .6), (85, 55, .9), (42, 85, .6), (63, 87, .7), (27, 43, .4), (53, 13, .5), (88, 43, .4),
+         (38, 61, .5)]
+SPARKS = [(65, 23, 3.2), (30, 73, 2.6), (80, 79, 1.8)]
+
+
+def mirror_markup(main=True):
+    gems = []
+    for k in range(8):
+        big = k % 2 == 0
+        d = 'M150 1L154.5 8L150 15L145.5 8Z' if big else 'M150 4L152.6 8L150 12L147.4 8Z'
+        gems.append(f'<path class="rim-gem{"" if big else " sm"}" d="{d}" transform="rotate({k * 45} 150 150)"/>')
+        gems.append(f'<circle class="rim-gem sm" cx="150" cy="8" r="1.3" transform="rotate({k * 45 + 22.5} 150 150)"/>')
+    rim = ('<svg class="mirror-rim" viewBox="0 0 300 300">'
+           '<circle class="rim-line" cx="150" cy="150" r="128"/>'
+           '<circle class="rim-ticks" cx="150" cy="150" r="135" stroke-dasharray="1.3 10.48"/>'
+           '<circle class="rim-line" cx="150" cy="150" r="142"/>' + ''.join(gems) + '</svg>')
+    stars = ''.join(f'<circle class="star" cx="{x}" cy="{y}" r="{r}" style="animation-delay:{(i * 0.53) % 3.6:.2f}s"/>'
+                    for i, (x, y, r) in enumerate(STARS))
+    sparks = ''.join(
+        f'<path class="spark" d="M{x} {y - s}Q{x} {y} {x + s} {y}Q{x} {y} {x} {y + s}Q{x} {y} {x - s} {y}Q{x} {y} {x} {y - s}Z" '
+        f'style="animation-delay:{i * 1.4:.1f}s"/>'
+        for i, (x, y, s) in enumerate(SPARKS))
+    sky = f'<svg class="mirror-sky" viewBox="0 0 100 100"><circle class="ring" cx="50" cy="50" r="44"/>{stars}{sparks}</svg>'
+    ripples = '<span class="ripple"></span>' * 3 if main else ''
+    mid = ' id="mirror"' if main else ''
+    return (f'      <div class="mirror-wrap" aria-hidden="true">\n'
+            f'        {rim}\n'
+            f'        <div class="mirror"{mid}>{ripples}{sky}<span class="sheen"></span></div>\n'
+            f'      </div>')
+
+
+def fix_mirror(rel, main):
+    s = read(rel)
+    if '<!-- mirror:start -->' not in s:
+        s, n = re.subn(r'<div class="mirror"[^>]*>(?:\s*<span class="ripple"></span>)*\s*</div>',
+                       '<!-- mirror:start -->\n      <!-- mirror:end -->', s, count=1)
+        assert n == 1, rel
+    a = s.index('<!-- mirror:start -->') + len('<!-- mirror:start -->')
+    b = s.index('<!-- mirror:end -->')
+    write(rel, s[:a] + '\n' + mirror_markup(main) + '\n      ' + s[b:])
+
+
 # ── 새 페이지들 ─────────────────────────────────────────────
 def build_cards(cards):
     for i, c in enumerate(cards):
@@ -324,7 +368,7 @@ def build_cards(cards):
         desc = f'타로 {c["ko"]}({c["en"]}) 카드의 뜻을 정리했어요. 키워드는 {c["kw"]}. 그림 속 상징, 사랑과 일, 거꾸로 나왔을 때의 의미까지 확인해 보세요.'
         write(f'tarot/cards/{c["slug"]}/index.html',
               page(f'/tarot/cards/{c["slug"]}/', f'타로 {c["ko"]} 카드 의미 ({c["en"]})', desc, main,
-                   og='/og-tarot.png', current='/tarot/cards/',
+                   og='/share-tarot.png', current='/tarot/cards/',
                    note='카드의 뜻은 재미와 하루를 돌아보는 용도로 즐겨 주세요.'))
 
     grid = ''.join(
@@ -342,7 +386,7 @@ def build_cards(cards):
     write('tarot/cards/index.html',
           page('/tarot/cards/', '타로 메이저 아르카나 22장 의미 총정리',
                '타로 메이저 아르카나 22장의 뜻을 한눈에 정리했어요. 바보부터 세계까지 카드별 그림 속 상징, 사랑과 일, 거꾸로 나왔을 때의 의미를 확인해 보세요.',
-               main, og='/og-tarot.png', current='/tarot/cards/', kind='website'))
+               main, og='/share-tarot.png', current='/tarot/cards/', kind='website'))
 
 
 def build_reads():
@@ -359,7 +403,7 @@ def build_reads():
     {read_list(others)}'''
         write(f'read/{a["slug"]}/index.html',
               page(f'/read/{a["slug"]}/', a['title'], a['summary'], main,
-                   og=a.get('og', '/og.png'), current='/read/'))
+                   og=a.get('og', '/share.png'), current='/read/'))
 
     main = f'''    <h1>읽을거리</h1>
     <p class="summary">전생과 인연, 타로에 얽힌 옛이야기와 역사를 모았어요. 테스트 결과를 더 재미있게 즐기고 싶다면 읽어 보세요.</p>
@@ -464,6 +508,8 @@ def main():
     for rel in ['past-life/index.html', 'bond/index.html', 'tarot/index.html']:
         fix_chrome(rel, '/')
     build_hub()
+    fix_mirror('past-life/index.html', main=True)
+    fix_mirror('index.html', main=False)
     build_cards(cards)
     build_reads()
     build_about()

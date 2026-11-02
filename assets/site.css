@@ -76,23 +76,67 @@ h1 {
 }
 
 /* 업경 (거울) */
-.stage { display: flex; justify-content: center; padding: 30px 0 28px; transition: padding .5s ease; }
+.stage { display: flex; justify-content: center; padding: 46px 0 42px; transition: padding .5s ease; }
 body[data-state="gazing"] .stage { padding-top: 14vh; }
+.mirror-wrap {
+  position: relative;
+  width: min(54vw, 214px);
+  aspect-ratio: 1;
+}
+/* 거울 둘레의 놋쇠 문양 */
+.mirror-rim {
+  position: absolute;
+  inset: -16%;
+  width: 132%;
+  height: 132%;
+  overflow: visible;
+  animation: rim-turn 120s linear infinite;
+}
+.mirror-rim .rim-line { fill: none; stroke: var(--brass); stroke-opacity: .5; stroke-width: .8; }
+.mirror-rim .rim-ticks { fill: none; stroke: var(--brass); stroke-opacity: .55; stroke-width: 5; }
+.mirror-rim .rim-gem { fill: var(--brass); }
+.mirror-rim .rim-gem.sm { fill-opacity: .7; }
+body[data-state="gazing"] .mirror-rim { animation-duration: 9s; }
 .mirror {
   position: relative;
-  width: min(58vw, 224px);
-  aspect-ratio: 1;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(circle at 36% 30%, #4a5d93 0%, #2a3a6a 32%, #17203d 72%, #0f1530 100%);
   box-shadow:
     0 0 0 6px var(--brass),
     0 0 0 8px var(--brass-deep),
-    0 0 0 16px rgba(200,164,94,.09),
-    0 0 72px 14px rgba(200,164,94,.16),
+    0 0 72px 14px rgba(200,164,94,.18),
     inset 0 0 32px rgba(0,0,0,.55);
   transition: filter .35s ease;
 }
+/* 거울 속 별빛 */
+.mirror-sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+.mirror-sky .ring { fill: none; stroke: rgba(233,228,216,.16); stroke-width: .35; }
+.mirror-sky .star { fill: #F4EFE3; animation: twinkle 3.6s ease-in-out infinite; }
+.mirror-sky .spark { fill: #F6DFA6; animation: twinkle 4.8s ease-in-out infinite; }
+body[data-state="gazing"] .mirror-sky { animation: rim-turn 5s linear infinite; }
+/* 거울 표면을 스치는 빛 */
+.mirror .sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 50%;
+  background: linear-gradient(115deg, rgba(255,255,255,0) 42%, rgba(255,255,255,.2) 50%, rgba(255,255,255,0) 58%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  animation: sheen 9s ease-in-out infinite;
+}
+@keyframes rim-turn { to { transform: rotate(360deg); } }
+@keyframes twinkle { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@keyframes sheen { 0%, 70% { background-position: 100% 0; } 90%, 100% { background-position: 0 0; } }
 .mirror::before {
   content: '';
   position: absolute;
@@ -548,6 +592,8 @@ body[data-state="gazing"] .ripple:nth-child(3) { animation-delay: 1.4s; }
 
 @media (prefers-reduced-motion: reduce) {
   .mirror::after, body[data-state="gazing"] .ripple { animation: none; }
+  .mirror-rim, body[data-state="gazing"] .mirror-rim, .mirror-sky .star, .mirror-sky .spark,
+  body[data-state="gazing"] .mirror-sky, .mirror .sheen { animation: none; }
   .scroll-body { transition: none; }
   .scroll.is-open .seal { animation: none; }
   .mirror, .stage { transition: none; }

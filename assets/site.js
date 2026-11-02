@@ -203,6 +203,8 @@
           title: d.title,
           description: d.text,
           imageUrl: d.image,
+          imageWidth: d.imageWidth,
+          imageHeight: d.imageHeight,
           link: { mobileWebUrl: d.url, webUrl: d.url }
         },
         buttons: [
@@ -218,12 +220,16 @@
   function share(opts) {
     if (!sheet) buildSheet();
     var og = document.querySelector('meta[property="og:image"]');
+    var ogW = document.querySelector('meta[property="og:image:width"]');
+    var ogH = document.querySelector('meta[property="og:image:height"]');
     shareData = {
       title: opts.title,
       text: opts.text,
       url: opts.url,
       home: baseUrl(),
-      image: opts.image || (og ? og.content : '')
+      image: opts.image || (og ? og.content : ''),
+      imageWidth: Number(ogW ? ogW.content : 1200),
+      imageHeight: Number(ogH ? ogH.content : 600)
     };
     var both = opts.text + '\n' + opts.url;
     var links = {
