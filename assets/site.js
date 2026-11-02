@@ -5,7 +5,7 @@
   var CONFIG = {
     // 카카오 개발자 사이트(developers.kakao.com)에서 받은 JavaScript 키를 넣으면
     // 공유 창에 카카오톡 버튼이 생겨요. 비워 두면 카카오톡 버튼은 숨겨져요.
-    kakaoKey: '',
+    kakaoKey: '9c80b443d515192669720d8220b878d5',
     kakaoSdk: 'https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js'
   };
 
