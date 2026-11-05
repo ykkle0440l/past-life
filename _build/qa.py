@@ -4,7 +4,8 @@
     python3 _build/build.py && python3 _build/qa.py
 마지막 줄이 "문제 0건"이어야 올려요. 화면 사진은 임시 폴더(pstlf-qa)에 저장돼요.
 """
-import os, pathlib, re, subprocess, sys, tempfile, time
+import os, pathlib, re, struct, subprocess, sys, tempfile, time
+from urllib.parse import parse_qs, unquote, urlparse
 from html.parser import HTMLParser
 from playwright.sync_api import sync_playwright
 
@@ -14,6 +15,7 @@ OUT.mkdir(exist_ok=True)
 CHROME = '/usr/bin/google-chrome' if os.path.exists('/usr/bin/google-chrome') else None
 PORT = 8780
 B = f'http://127.0.0.1:{PORT}'
+SITE = 'https://pstlf.co.kr'
 fails, notes = [], []
 
 def b36(n):
@@ -105,6 +107,21 @@ for f in sorted((ROOT / 'tarot/cards').glob('*/index.html')):
     check('id="y2027"' in t and t.count('<dt>상반기</dt>') == 1 and 'href="/tarot/2027/"' in t, f'{f.parent.name}: 2027년 풀이 없음')
 for tp in ['index.html', 'past-life/index.html', 'bond/index.html', 'tarot/index.html']:
     check('href="/tarot/2027/"' in (ROOT / tp).read_text(encoding='utf-8'), f'{tp}: 신년 타로 링크 없음')
+
+for f in html_files:
+    rel = str(f.relative_to(ROOT)); s = f.read_text(encoding='utf-8')
+    meta = dict(re.findall(r'<meta (?:property|name)="([^"]+)" content="([^"]*)"', s))
+    for k in ['og:title', 'og:description', 'og:site_name', 'og:url', 'og:image', 'twitter:card']:
+        check(meta.get(k), f'{rel}: 공유 정보 {k} 없음')
+    img = ROOT / meta.get('og:image', '').replace('https://pstlf.co.kr/', '')
+    if check(meta.get('og:image', '').startswith('https://pstlf.co.kr/') and img.is_file(), f'{rel}: 공유 그림 {meta.get("og:image")}'):
+        w, h = struct.unpack('>II', img.read_bytes()[16:24])
+        check((str(w), str(h)) == (meta.get('og:image:width'), meta.get('og:image:height')), f'{rel}: 공유 그림 크기 {w}x{h}가 적힌 크기와 다름')
+        check(img.stat().st_size < 1_000_000, f'{rel}: 공유 그림이 1MB를 넘음')
+    if rel != '404.html':
+        want = SITE + '/' + rel.replace('index.html', '')
+        check(meta.get('og:url') == want and f'rel="canonical" href="{want}"' in s, f'{rel}: 공유 주소 {meta.get("og:url")} (기대 {want})')
+notes.append(f'공유 미리보기 정보 {len(html_files)}개 페이지 확인')
 
 # ── B·C. 브라우저 점검 ─────────────────────────────
 srv = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '--bind', '127.0.0.1'], cwd=ROOT,
@@ -426,6 +443,73 @@ try:
             pg.goto(B + l); pg.wait_for_timeout(80)
             n = len(pg.inner_text('main')); check(n > 1200, f'{l}: 글 분량 {n}')
         pg.close()
+
+        # 공유 창: 버튼마다 담기는 글과 주소, 카카오톡 카드, 친구가 링크를 눌렀을 때
+        MOCK = """
+        window.__kakao = []; window.__navshare = [];
+        window.Kakao = { _i: false, isInitialized: function () { return this._i; }, init: function (k) { this._i = true; window.__kakaoKey = k; },
+          Share: { sendDefault: function (o) { window.__kakao.push(o); } } };
+        Object.defineProperty(navigator, 'share', { configurable: true, value: function (d) { window.__navshare.push(d); return Promise.resolve(); } });
+        """
+        def share_ctx():
+            c = make_ctx(b, 390, 844); c.add_init_script(MOCK); return c
+
+        def open_sheet(pg):
+            pg.click('#shareBtn' if pg.is_visible('#shareBtn') else '#shareBtn2'); pg.wait_for_timeout(300)
+            return pg.evaluate("Object.fromEntries([...document.querySelectorAll('.share-item')].filter(e => !e.hidden).map(e => [e.dataset.kind, e.href || '']))")
+
+        def inspect_share(pg, path, img, label):
+            items = open_sheet(pg)
+            check(list(items) == ['kakao', 'sms', 'x', 'threads', 'facebook', 'copy', 'more'], f'{label}: 공유 버튼 {list(items)}')
+            text, url = unquote(items['sms'].split('body=', 1)[1]).rsplit('\n', 1)
+            check(url == pg.url and url.startswith(B + path + '?'), f'{label}: 공유 주소 {url}')
+            xq = parse_qs(urlparse(items['x']).query); tq = parse_qs(urlparse(items['threads']).query); fq = parse_qs(urlparse(items['facebook']).query)
+            check(xq.get('text') == [text] and xq.get('url') == [url], f'{label}: X 글과 주소')
+            check(tq.get('text') == [text + ' ' + url], f'{label}: 스레드 글과 주소')
+            check(fq.get('u') == [url], f'{label}: 페이스북 주소')
+            check(not any(bad in text for bad in ['undefined', 'null', 'NaN', '{X}', '{Y}']), f'{label}: 공유 글 {text!r}')
+            pg.click('[data-kind=kakao]'); pg.wait_for_timeout(200)
+            k = pg.evaluate('window.__kakao.pop()')
+            if check(k, f'{label}: 카카오톡 공유가 열리지 않음'):
+                c = k['content']; bt = k['buttons']
+                check(c['description'] == text and c['title'] and c['imageUrl'] == f'{SITE}/{img}' and (c['imageWidth'], c['imageHeight']) == (1200, 600),
+                      f'{label}: 카카오톡 카드 {c["title"]} {c["imageUrl"]}')
+                check(c['link']['webUrl'] == url == c['link']['mobileWebUrl'] and bt[0]['link']['webUrl'] == url == bt[0]['link']['mobileWebUrl'],
+                      f'{label}: 카카오톡 카드와 결과 보기 버튼 주소')
+                check([x['title'] for x in bt] == ['결과 보기', '나도 해 보기'] and bt[1]['link']['webUrl'] == B + path == bt[1]['link']['mobileWebUrl'],
+                      f'{label}: 카카오톡 나도 해 보기 버튼 {bt[1]["link"]["webUrl"]}')
+            check(not pg.is_visible('.share-panel'), f'{label}: 카카오톡 누른 뒤 공유 창 닫힘')
+            open_sheet(pg); pg.click('[data-kind=copy]'); pg.wait_for_timeout(300)
+            check(pg.evaluate('navigator.clipboard.readText()') == text + '\n' + url, f'{label}: 복사하기 내용')
+            open_sheet(pg); pg.click('[data-kind=more]'); pg.wait_for_timeout(200)
+            d = pg.evaluate('window.__navshare.pop()')
+            check(d and d['url'] == url and d['text'] == text and d['title'], f'{label}: 더보기 공유')
+            return text, url
+
+        def run_past(pg):
+            pg.fill('#name', '김하늘'); pg.type('#birth', '19980417'); pg.click('button[type=submit]'); wait_result(pg)
+        def run_bond(pg):
+            pg.fill('#nameA', '김하늘'); pg.fill('#nameB', '이바다'); pg.click('button[type=submit]'); wait_result(pg)
+        def run_tarot(pg):
+            pg.locator('.tcard').nth(6).click(); pg.wait_for_selector('#result:not([hidden])', timeout=5000); pg.wait_for_timeout(300)
+        def run_ny(pg):
+            for n in (6, 5, 4): pg.locator('.tcard').nth(n).click(); pg.wait_for_timeout(150)
+            pg.wait_for_selector('#result:not([hidden])', timeout=6000); pg.wait_for_timeout(300)
+        for path, run, img in [('/past-life/', run_past, 'share.png'), ('/bond/', run_bond, 'share-bond.png'),
+                               ('/tarot/', run_tarot, 'share-tarot.png'), ('/tarot/2027/', run_ny, 'share-2027.png')]:
+            c1 = share_ctx(); pg = open_page(c1, path, f'share {path}'); pg.wait_for_timeout(300); run(pg)
+            title = pg.inner_text('#rTitle')
+            text, url = inspect_share(pg, path, img, f'공유 {path}')
+            check(pg.evaluate('window.__kakaoKey') == '9c80b443d515192669720d8220b878d5', f'공유 {path}: 카카오 키')
+            pg.close(); c1.close()
+            c2 = share_ctx(); pg = open_page(c2, url.replace(B, ''), f'share friend {path}')
+            pg.wait_for_selector('#result:not([hidden])', timeout=6000); pg.wait_for_timeout(500)
+            check(pg.inner_text('#rTitle') == title and pg.is_visible('#sharedNote') and pg.is_visible('#mineBtn'), f'공유 {path}: 친구가 링크를 열면 같은 결과')
+            text2, url2 = inspect_share(pg, path, img, f'공유 {path} 친구 화면')
+            check(url2 == url, f'공유 {path}: 친구가 다시 공유한 주소가 다름')
+            check(not text2.startswith('오늘 내 '), f'공유 {path}: 친구 카드를 내 카드라고 공유함 {text2!r}')
+            pg.close(); c2.close()
+            notes.append(f'공유 {path}: {text}  →  {url.replace(B, SITE)}')
 
         # 화면 사진
         ctx6 = make_ctx(b, 390, 844)

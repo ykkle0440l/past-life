@@ -575,7 +575,7 @@
     var first = c.msg.split('. ')[0] + '.';
     S.share({
       title: '오늘의 타로 한 장',
-      text: '오늘 내 타로 카드는 \'' + c.ko + '\'! ' + first + ' 너도 한 장 뽑아 봐.',
+      text: (current.shared ? '오늘의 타로 카드 \'' : '오늘 내 타로 카드는 \'') + c.ko + '\'! ' + first + ' 너도 한 장 뽑아 봐.',
       url: shareUrl()
     });
   }
