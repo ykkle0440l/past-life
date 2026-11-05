@@ -38,5 +38,7 @@ python3 _build/qa.py
 
 ## 설정
 
+- 네이버 서치어드바이저 소유확인: 첫 화면(`index.html`) `<head>` 의 `naver-site-verification` 태그. 지우면 소유확인이 풀려요.
+
 - 카카오톡 공유: `assets/site.js` 의 `kakaoKey` 에 카카오 JavaScript 키를 넣어요.
 - 광고: 쿠팡 배너는 각 테스트의 `쿠팡 파트너스 배너 코드` 주석 사이, 애드센스는 `<head>` 안에 있어요.

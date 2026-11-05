@@ -87,6 +87,7 @@ for tp in ['index.html', 'past-life/index.html']:
     m = re.search(r'<svg class="mirror-sky".*?</svg>', t, re.S)
     check(m and 'width="0"' in m.group(0) and 'class="ring" fill="none"' in m.group(0), f'{tp}: 거울 속 기본 색')
 check('pub-8262915217195031' in (ROOT / 'ads.txt').read_text(), 'ads.txt 내용')
+check('<meta name="naver-site-verification" content="1b973b80596cec6f550286e6417df6bd03c4554d" />' in (ROOT / 'index.html').read_text(encoding='utf-8'), '첫 화면: 네이버 소유확인 태그 없음')
 for loc in re.findall(r'<loc>https://pstlf\.co\.kr(/[^<]*)</loc>', (ROOT / 'sitemap.xml').read_text()):
     t = ROOT / loc.lstrip('/')
     if loc.endswith('/'): t = t / 'index.html'
