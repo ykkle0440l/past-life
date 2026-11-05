@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=79f1a2c45e">
+<link rel="stylesheet" href="/assets/site.css?v=ac7b0e5728">
 
 <!-- 구글 애드센스 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8262915217195031"
@@ -124,7 +124,10 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
       <p class="lede">두 사람의 이름을 적으면, 전생에 두 사람이 어떤 사이였는지 보여 드려요.</p>
     </section>
 
-    <p class="shared-note" id="sharedNote" hidden>친구가 보낸 인연서예요</p>
+    <div class="shared-banner" id="sharedNote" hidden>
+      <p class="shared-note">친구가 보낸 인연서예요<small>두 사람 이름으로 우리 인연도 볼 수 있어요</small></p>
+      <button class="btn btn-primary btn-chip" type="button" id="mineTopBtn">우리도 보기</button>
+    </div>
 
     <div class="bondvis" aria-hidden="true">
       <svg class="thread-svg" viewBox="0 0 340 150">
@@ -288,7 +291,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="/assets/site.js?v=7a77368cf0"></script>
+<script src="/assets/site.js?v=1685bc7890"></script>
 <script>
 (function () {
   'use strict';
@@ -510,6 +513,7 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
     setBubble($('bubbleA'), '', '나');
     setBubble($('bubbleB'), '', '상대');
     $('knot').textContent = '?';
+    $('sharedNote').hidden = true;
     show('intro');
     window.scrollTo(0, 0);
   }
@@ -529,6 +533,9 @@ body[data-state="result"] .knot { background: var(--thread); transform: translat
   $('shareBtn2').addEventListener('click', share);
   $('againBtn').addEventListener('click', reset);
   $('mineBtn').addEventListener('click', reset);
+  $('mineTopBtn').addEventListener('click', reset);
+  // 친구 화면에서 결과를 읽는 동안 화면 아래에 '우리 인연도 보기' 버튼을 띄워요
+  S.sharedBar({ label: '우리 인연도 보기', top: $('sharedNote'), bottom: $('sharedActions'), onClick: reset });
 
   // 친구가 공유한 링크로 들어온 경우
   (function fromLink() {

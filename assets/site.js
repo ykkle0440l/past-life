@@ -258,6 +258,53 @@
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
+  /* ── 친구 화면의 아래 고정 버튼 ─────────────────────────────── */
+  // 친구가 보낸 결과를 읽는 동안(맨 위 안내는 지나쳤고, 결과 아래 버튼은 아직 안 보일 때)만
+  // 화면 아래에 '나도 해 보기' 버튼을 띄워요. 내 결과 화면에서는 나오지 않아요.
+  var bar, barOpts, barQueued = false;
+
+  function isShown(el) { return !!el && el.offsetParent !== null; }
+
+  function updateBar() {
+    barQueued = false;
+    if (!bar) return;
+    var on = false;
+    if (barOpts && isShown(barOpts.top) && isShown(barOpts.bottom)) {
+      on = barOpts.top.getBoundingClientRect().bottom < 0 &&
+           barOpts.bottom.getBoundingClientRect().top > window.innerHeight;
+    }
+    var btn = bar.querySelector('button');
+    bar.classList.toggle('is-on', on);
+    bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    btn.tabIndex = on ? 0 : -1;
+    document.body.classList.toggle('has-cta-bar', on);
+  }
+
+  function queueBar() {
+    if (barQueued) return;
+    barQueued = true;
+    requestAnimationFrame(updateBar);
+  }
+
+  // opts: { label, top, bottom, onClick } — top: 맨 위 친구 안내, bottom: 결과 아래 버튼 묶음
+  function sharedBar(opts) {
+    barOpts = opts || null;
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'cta-bar';
+      bar.innerHTML = '<button type="button" class="btn btn-primary"></button>';
+      document.body.appendChild(bar);
+      bar.querySelector('button').addEventListener('click', function () {
+        if (barOpts && barOpts.onClick) barOpts.onClick();
+        queueBar();
+      });
+      window.addEventListener('scroll', queueBar, { passive: true });
+      window.addEventListener('resize', queueBar);
+    }
+    bar.querySelector('button').textContent = barOpts ? barOpts.label : '';
+    queueBar();
+  }
+
   /* ── 주소 ─────────────────────────────── */
   function baseUrl() {
     return location.href.split('?')[0].split('#')[0];
@@ -288,7 +335,7 @@
     hash: hash, rng: rng, pick: pick, range: range, hasBatchim: hasBatchim,
     todayKey: todayKey, koreanDate: koreanDate,
     birthInput: birthInput, parseBirth: parseBirth,
-    toast: toast, copy: copy, copyLink: copyLink, share: share,
+    toast: toast, copy: copy, copyLink: copyLink, share: share, sharedBar: sharedBar,
     baseUrl: baseUrl, setQuery: setQuery,
     storeGet: storeGet, storeSet: storeSet,
     reduceMotion: reduceMotion

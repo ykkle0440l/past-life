@@ -313,6 +313,7 @@ try:
         pg = open_page(ctx2, bond_url.replace(B, ''), 'bond shared'); wait_result(pg, 3000)
         check(pg.is_visible('#sharedNote') and pg.inner_text('#rTitle') == t1, 'bond: 친구 화면')
         pg.click('#mineBtn'); pg.wait_for_timeout(200); check(pg.is_visible('#form'), 'bond: 우리 인연도 보기')
+        check(not pg.is_visible('#sharedNote'), 'bond: 우리 인연도 보기를 누르면 친구 안내가 사라짐')
         pg.close(); ctx2.close()
 
         # 타로
@@ -451,6 +452,9 @@ try:
           Share: { sendDefault: function (o) { window.__kakao.push(o); } } };
         Object.defineProperty(navigator, 'share', { configurable: true, value: function (d) { window.__navshare.push(d); return Promise.resolve(); } });
         """
+        def bar_on(pg):
+            return pg.evaluate("(() => { const e = document.querySelector('.cta-bar'); return !!e && e.classList.contains('is-on') && getComputedStyle(e).visibility === 'visible'; })()")
+
         def share_ctx():
             c = make_ctx(b, 390, 844); c.add_init_script(MOCK); return c
 
@@ -499,6 +503,11 @@ try:
                                ('/tarot/', run_tarot, 'share-tarot.png'), ('/tarot/2027/', run_ny, 'share-2027.png')]:
             c1 = share_ctx(); pg = open_page(c1, path, f'share {path}'); pg.wait_for_timeout(300); run(pg)
             title = pg.inner_text('#rTitle')
+            check(not pg.is_visible('#sharedNote') and not pg.is_visible('#mineTopBtn'), f'공유 {path}: 내 결과에는 친구 안내 없음')
+            for y in (300, 700, 1100):
+                pg.evaluate(f'window.scrollTo(0, {y})'); pg.wait_for_timeout(120)
+                check(not bar_on(pg), f'공유 {path}: 내 결과에서 아래 버튼이 뜸 ({y}px)')
+            pg.evaluate('window.scrollTo(0, 0)')
             text, url = inspect_share(pg, path, img, f'공유 {path}')
             check(pg.evaluate('window.__kakaoKey') == '9c80b443d515192669720d8220b878d5', f'공유 {path}: 카카오 키')
             pg.close(); c1.close()
@@ -509,6 +518,36 @@ try:
             check(url2 == url, f'공유 {path}: 친구가 다시 공유한 주소가 다름')
             check(not text2.startswith('오늘 내 '), f'공유 {path}: 친구 카드를 내 카드라고 공유함 {text2!r}')
             pg.close(); c2.close()
+            # 친구 화면: 첫 화면의 '나도 해 보기', 읽는 동안 아래에 뜨는 버튼, 누르면 내 테스트 시작
+            c3 = share_ctx(); pg = open_page(c3, url.replace(B, ''), f'friend cta {path}')
+            pg.wait_for_selector('#result:not([hidden])', timeout=6000); pg.wait_for_timeout(500)
+            tb = pg.locator('#mineTopBtn').bounding_box()
+            check(pg.is_visible('#mineTopBtn') and tb['y'] + tb['height'] <= 844, f'공유 {path}: 맨 위 나도 하기 버튼이 첫 화면에 없음')
+            check(not bar_on(pg), f'공유 {path}: 처음부터 아래 버튼이 뜸')
+            top_bottom = pg.evaluate("document.getElementById('sharedNote').getBoundingClientRect().bottom + scrollY")
+            pg.evaluate(f'window.scrollTo(0, {top_bottom + 40})'); pg.wait_for_timeout(400)
+            bar_label = pg.evaluate("document.querySelector('.cta-bar button').textContent")
+            check(bar_on(pg) and bar_label == pg.inner_text('#mineBtn'), f'공유 {path}: 읽는 동안 아래 버튼 {bar_on(pg)} {bar_label!r}')
+            check(pg.evaluate("document.body.classList.contains('has-cta-bar')"), f'공유 {path}: 알림 위치 조정 안 됨')
+            pg.evaluate("document.getElementById('sharedActions').scrollIntoView({block: 'center'})"); pg.wait_for_timeout(400)
+            check(not bar_on(pg), f'공유 {path}: 결과 아래 버튼과 겹쳐 뜸')
+            pg.evaluate(f'window.scrollTo(0, {top_bottom + 40})'); pg.wait_for_timeout(400)
+            pg.click('.cta-bar button'); pg.wait_for_timeout(500)
+            started = {'/past-life/': "!document.getElementById('intro').hidden",
+                       '/bond/': "!document.getElementById('form').hidden",
+                       '/tarot/': "document.querySelectorAll('.tcard').length === 7",
+                       '/tarot/2027/': "document.querySelectorAll('.tcard').length === 7"}[path]
+            check(pg.evaluate(started) and not pg.is_visible('#sharedNote') and '?' not in pg.url, f'공유 {path}: 아래 버튼을 누르면 내 테스트 시작')
+            check(not bar_on(pg) and pg.evaluate('scrollY') < 5, f'공유 {path}: 누른 뒤 맨 위로, 아래 버튼 사라짐')
+            pg.close(); c3.close()
+            c4 = make_ctx(b, 320, 640); pg = open_page(c4, url.replace(B, ''), f'friend 320 {path}')
+            pg.wait_for_selector('#result:not([hidden])', timeout=6000); pg.wait_for_timeout(400)
+            tb = pg.locator('#mineTopBtn').bounding_box()
+            check(tb['y'] + tb['height'] <= 640 and tb['x'] + tb['width'] <= 320 - 19, f'공유 {path}: 320px 맨 위 버튼 위치 {tb}')
+            check(pg.evaluate('document.documentElement.scrollWidth') <= 321, f'공유 {path}: 320px 친구 화면 가로로 넘침')
+            pg.click('#mineTopBtn'); pg.wait_for_timeout(500)
+            check(pg.evaluate(started) and not pg.is_visible('#sharedNote'), f'공유 {path}: 맨 위 버튼을 누르면 내 테스트 시작')
+            pg.close(); c4.close()
             notes.append(f'공유 {path}: {text}  →  {url.replace(B, SITE)}')
 
         # 화면 사진

@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=79f1a2c45e">
+<link rel="stylesheet" href="/assets/site.css?v=ac7b0e5728">
 
 <!-- 구글 애드센스 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8262915217195031"
@@ -213,7 +213,10 @@
       <p class="lede" id="lede">새해를 떠올리며 끌리는 카드를 세 장 차례로 골라 주세요.</p>
     </section>
 
-    <p class="shared-note" id="sharedNote" hidden>친구가 뽑은 2027년 카드예요</p>
+    <div class="shared-banner" id="sharedNote" hidden>
+      <p class="shared-note">친구가 보낸 신년 타로예요<small>카드 세 장으로 나의 새해도 볼 수 있어요</small></p>
+      <button class="btn btn-primary btn-chip" type="button" id="mineTopBtn">나도 뽑기</button>
+    </div>
 
     <ol class="slots" id="slots" aria-label="고른 카드 세 장">
       <li class="slot"><div class="slot-card" data-n="1"></div><span class="slot-label">상반기<small>1~6월</small></span></li>
@@ -341,7 +344,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="/assets/site.js?v=7a77368cf0"></script>
+<script src="/assets/site.js?v=1685bc7890"></script>
 <script>
 /* 카드 그림과 2027년 풀이: python3 _build/build.py 가 채워요 (오늘의 타로 카드 + _build/content_newyear.py) */
 /* data:start */
@@ -537,7 +540,7 @@ window.NY_TEXT = [{"word": "새 출발", "h1": "새해가 시작되면 해 보�
     var r = S.rng(S.hash('2027|newyear|' + ids.join('-')));
 
     $('hint').hidden = true;
-    $('lede').textContent = shared ? '친구가 뽑은 세 장이에요.' : '2027년을 비추는 세 장이에요.';
+    $('lede').textContent = shared ? '친구의 2027년을 비추는 세 장이에요.' : '2027년을 비추는 세 장이에요.';
     $('rLead').textContent = shared ? '친구의 2027년은' : '당신의 2027년은';
     var title = $('rTitle');
     title.textContent = '';
@@ -616,6 +619,9 @@ window.NY_TEXT = [{"word": "새 출발", "h1": "새해가 시작되면 해 보�
   $('shareBtn').addEventListener('click', share);
   $('shareBtn2').addEventListener('click', share);
   $('mineBtn').addEventListener('click', startOwn);
+  $('mineTopBtn').addEventListener('click', startOwn);
+  // 친구 화면에서 결과를 읽는 동안 화면 아래에 '나도 세 장 뽑기' 버튼을 띄워요
+  S.sharedBar({ label: '나도 세 장 뽑기', top: $('sharedNote'), bottom: $('sharedActions'), onClick: startOwn });
   $('againBtn').addEventListener('click', function () {
     S.storeSet(STORE_KEY, null);
     S.setQuery('');

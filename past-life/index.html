@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=79f1a2c45e">
+<link rel="stylesheet" href="/assets/site.css?v=ac7b0e5728">
 
 <!-- 구글 애드센스 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8262915217195031"
@@ -70,7 +70,10 @@
     </section>
 
     <section id="result" hidden>
-      <p class="shared-note" id="sharedNote" hidden>친구가 보낸 전생 기록이에요</p>
+      <div class="shared-banner" id="sharedNote" hidden>
+        <p class="shared-note">친구가 보낸 전생 기록이에요<small>이름과 생년월일만 넣으면 나의 전생도 볼 수 있어요</small></p>
+        <button class="btn btn-primary btn-chip" type="button" id="mineTopBtn">나도 보기</button>
+      </div>
 
       <article class="scroll" id="scroll" aria-labelledby="rTitle">
         <div class="rod"></div>
@@ -183,7 +186,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="/assets/site.js?v=7a77368cf0"></script>
+<script src="/assets/site.js?v=1685bc7890"></script>
 <script>
 (function () {
   'use strict';
@@ -457,6 +460,9 @@
   $('shareBtn2').addEventListener('click', share);
   $('againBtn').addEventListener('click', reset);
   $('mineBtn').addEventListener('click', reset);
+  $('mineTopBtn').addEventListener('click', reset);
+  // 친구 화면에서 결과를 읽는 동안 화면 아래에 '내 전생도 보기' 버튼을 띄워요
+  S.sharedBar({ label: '내 전생도 보기', top: $('sharedNote'), bottom: $('sharedActions'), onClick: reset });
 
   // 친구가 공유한 링크로 들어온 경우
   (function fromLink() {
