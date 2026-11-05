@@ -6,6 +6,7 @@
 - `/past-life/` 전생 체험
 - `/bond/` 전생의 인연 궁합
 - `/tarot/` 오늘의 타로 한 장
+- `/tarot/2027/` 2027년 신년 타로 (카드 세 장: 상반기, 하반기, 올해의 열쇠)
 - `/tarot/cards/` 메이저 아르카나 22장 의미
 - `/read/` 읽을거리
 - `/about/` 소개, 문의
@@ -26,7 +27,12 @@ python3 _build/qa.py
 
 `build.py` 를 실행하면
 테스트 아래 설명글, 카드 의미, 읽을거리, 소개, 개인정보처리방침, 404, sitemap 이 다시 만들어져요.
+신년 타로의 카드별 2027년 풀이는 `_build/content_newyear.py` 에 있고, build.py 가 신년 타로 페이지와 카드 의미 페이지에 채워 넣어요.
 (Node.js 필요. `_build` 폴더는 사이트에 올라가지 않아요.)
+
+## 신년 타로 공유 이미지
+
+`share-2027.png` 는 `python3 _build/make_share_newyear.py` 로 만들었어요. 문구를 바꿀 때만 다시 실행하면 돼요.
 
 ## 설정
 

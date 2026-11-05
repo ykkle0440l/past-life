@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2027년 신년 타로 | 카드 세 장으로 보는 새해 운세 - 전생 거울</title>
+<meta name="description" content="2027년 정미년 새해 운세를 타로 카드 세 장으로 무료로 봐요. 상반기와 하반기의 흐름, 올해의 열쇠, 행운의 색과 행운의 달까지 확인해 보세요.">
+<meta name="theme-color" content="#18203A">
+<link rel="canonical" href="https://pstlf.co.kr/tarot/2027/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="전생 거울">
+<meta property="og:title" content="2027년 신년 타로">
+<meta property="og:description" content="카드 세 장으로 보는 나의 2027년. 상반기, 하반기, 올해의 열쇠를 뽑아 보세요.">
+<meta property="og:url" content="https://pstlf.co.kr/tarot/2027/">
+<meta property="og:image" content="https://pstlf.co.kr/share-2027.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=79f1a2c45e">
+
+<!-- 구글 애드센스 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8262915217195031"
+     crossorigin="anonymous"></script>
+
+<style>
+.intro { padding-top: 30px; }
+.year-badge {
+  text-align: center;
+  color: var(--brass);
+  font-size: .9rem;
+  letter-spacing: .06em;
+  margin: 0 0 10px;
+}
+.intro .lede { margin-bottom: 22px; }
+
+/* 고른 카드 세 자리 */
+.slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.slot { display: flex; flex-direction: column; align-items: center; gap: 9px; min-width: 0; }
+.slot-card {
+  position: relative;
+  width: 100%;
+  max-width: 104px;
+  aspect-ratio: 96 / 164;
+  border-radius: 8px;
+  border: 1.5px dashed rgba(200,164,94,.38);
+  display: grid;
+  place-items: center;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.slot-card::before {
+  content: attr(data-n);
+  font-family: var(--display);
+  font-size: 1.4rem;
+  color: rgba(200,164,94,.5);
+}
+.slot.is-next .slot-card {
+  border-color: var(--brass);
+  box-shadow: 0 0 20px rgba(200,164,94,.22);
+  animation: slot-glow 1.8s ease-in-out infinite;
+}
+.slot.is-filled .slot-card { border-color: transparent; box-shadow: none; animation: none; }
+.slot.is-filled .slot-card::before { content: none; }
+.slot-label {
+  font-family: var(--display);
+  font-size: .98rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--moon-dim);
+}
+.slot-label small { display: block; margin-top: 3px; font-family: var(--body); font-size: .74rem; opacity: .85; }
+.slot.is-filled .slot-label { color: #F4EFE3; }
+@keyframes slot-glow { 0%, 100% { box-shadow: 0 0 10px rgba(200,164,94,.12); } 50% { box-shadow: 0 0 24px rgba(200,164,94,.32); } }
+
+.scard {
+  position: absolute;
+  inset: 0;
+  perspective: 800px;
+  animation: slot-in .5s cubic-bezier(.3,.8,.3,1) both;
+}
+@keyframes slot-in { from { opacity: 0; transform: translateY(46px) scale(.82); } to { opacity: 1; transform: none; } }
+.scard-inner, .tcard-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .85s cubic-bezier(.4,.1,.2,1);
+}
+.scard.is-flipped .scard-inner { transform: rotateY(180deg); }
+
+/* 펼친 카드 7장 */
+.deck {
+  position: relative;
+  height: 236px;
+  margin: 18px -16px 0;
+  transition: height .6s ease, opacity .5s ease, margin .6s ease;
+}
+.deck.is-done { height: 0; margin-top: 0; opacity: 0; pointer-events: none; }
+.tcard {
+  --x: 0; --y: 0; --r: 0;
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  width: 96px;
+  height: 164px;
+  margin-left: -48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 900px;
+  transform-origin: 50% 60%;
+  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px)) rotate(calc(var(--r) * 1deg));
+  transition: transform .5s cubic-bezier(.3,.8,.3,1), opacity .35s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.deck:not(.is-done) .tcard:not(.is-taken):active { transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 12px)) rotate(calc(var(--r) * 1deg)); }
+@media (hover: hover) {
+  .deck:not(.is-done) .tcard:not(.is-taken):hover { transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 12px)) rotate(calc(var(--r) * 1deg)); }
+}
+.tcard.is-taken {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px - 70px)) rotate(calc(var(--r) * 1deg)) scale(.8);
+}
+.tback, .tface {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+.tback {
+  background:
+    repeating-linear-gradient(45deg, rgba(200,164,94,.10) 0 1.5px, transparent 1.5px 8px),
+    repeating-linear-gradient(-45deg, rgba(200,164,94,.10) 0 1.5px, transparent 1.5px 8px),
+    #1d2747;
+  border: 2px solid var(--brass);
+  box-shadow: inset 0 0 0 4px #1d2747, inset 0 0 0 5px rgba(200,164,94,.55), 0 8px 18px rgba(0,0,0,.45);
+}
+.tback::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #4a5d93, #1d2747 75%);
+  box-shadow: 0 0 0 2px var(--brass), 0 0 0 5px #1d2747, 0 0 0 6px rgba(200,164,94,.5);
+}
+.tface {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 5px 7px;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .16 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 5px rgba(43,37,32,.55), 0 8px 18px rgba(0,0,0,.45);
+}
+.tface-num { font-family: var(--display); font-size: .74rem; line-height: 1; margin-top: 3px; color: var(--seal); }
+.tface-art { flex: 1; width: 100%; display: grid; place-items: center; }
+.tface-art svg { width: 64%; height: auto; aspect-ratio: 1; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.tface-name { font-family: var(--display); font-size: .84rem; line-height: 1.2; text-align: center; }
+.tface-en { font-size: .48rem; color: var(--ink-soft); margin: 2px 0 3px; letter-spacing: .03em; text-align: center; }
+.deck-hint { text-align: center; color: var(--moon-dim); font-size: .92rem; margin: 2px 0 0; min-height: 1.6em; }
+
+/* 결과 */
+.record-sec h3 small { font-family: var(--body); font-size: .84rem; color: var(--ink-soft); margin-left: 6px; }
+.record-title .nw { white-space: nowrap; }
+.record-links { margin: 24px 0 0; font-size: .9rem; color: var(--ink-soft); line-height: 1.7; }
+.record-links a { color: var(--seal); text-underline-offset: 3px; margin-right: 10px; }
+
+@media (max-width: 360px) {
+  .slots { gap: 9px; }
+  .tface-name { font-size: .76rem; }
+  .slot-label { font-size: .9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tcard, .tcard-inner, .scard, .scard-inner, .deck, .slot-card { transition: none; animation: none; }
+  .slot.is-next .slot-card { animation: none; }
+}
+.no-anim, .no-anim * { transition: none !important; animation: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="site-head">
+    <a class="wordmark" href="/">전생 거울</a>
+    <nav class="site-nav" aria-label="사이트 메뉴"><a href="/" aria-current="page">테스트</a><a href="/tarot/cards/">카드 의미</a><a href="/read/">읽을거리</a></nav>
+  </header>
+
+  <main>
+    <section class="intro" id="intro">
+      <p class="year-badge">2027 정미년 · 붉은 양의 해</p>
+      <h1>2027년 신년 타로</h1>
+      <p class="lede" id="lede">새해를 떠올리며 끌리는 카드를 세 장 차례로 골라 주세요.</p>
+    </section>
+
+    <p class="shared-note" id="sharedNote" hidden>친구가 뽑은 2027년 카드예요</p>
+
+    <ol class="slots" id="slots" aria-label="고른 카드 세 장">
+      <li class="slot"><div class="slot-card" data-n="1"></div><span class="slot-label">상반기<small>1~6월</small></span></li>
+      <li class="slot"><div class="slot-card" data-n="2"></div><span class="slot-label">하반기<small>7~12월</small></span></li>
+      <li class="slot"><div class="slot-card" data-n="3"></div><span class="slot-label">올해의 열쇠<small>한 해 전체</small></span></li>
+    </ol>
+
+    <div class="deck" id="deck" aria-label="타로 카드"></div>
+    <p class="deck-hint" id="hint" aria-live="polite"></p>
+
+    <section id="result" hidden>
+      <article class="scroll" id="scroll" aria-labelledby="rTitle">
+        <div class="rod"></div>
+        <div class="scroll-body">
+          <div class="paper">
+            <div class="paper-inner">
+              <div class="seal" aria-hidden="true">新年</div>
+              <div class="record-head">
+                <p class="record-owner">2027년 신년 타로</p>
+                <p class="record-lead" id="rLead">당신의 2027년은</p>
+              </div>
+              <h2 class="record-title" id="rTitle"></h2>
+
+              <dl class="record-table">
+                <dt>키워드</dt><dd id="rWords"></dd>
+                <dt>행운의 색</dt><dd><i class="swatch" id="rSwatch"></i><span id="rColor"></span></dd>
+                <dt>행운의 달</dt><dd id="rMonth"></dd>
+              </dl>
+
+              <section class="record-sec">
+                <h3>상반기<small id="rCard0"></small></h3>
+                <p id="rText0"></p>
+              </section>
+              <section class="record-sec">
+                <h3>하반기<small id="rCard1"></small></h3>
+                <p id="rText1"></p>
+              </section>
+              <section class="record-sec">
+                <h3>올해의 열쇠<small id="rCard2"></small></h3>
+                <p id="rText2"></p>
+              </section>
+
+              <p class="record-links" id="rLinks"></p>
+              <p class="record-sign" id="rSign"></p>
+            </div>
+          </div>
+        </div>
+        <div class="rod"></div>
+      </article>
+
+      <div class="actions" id="ownActions">
+        <button class="btn btn-primary" type="button" id="shareBtn">결과 공유하기</button>
+        <button class="btn btn-text" type="button" id="againBtn">다른 사람도 뽑아 보기</button>
+      </div>
+      <div class="actions" id="sharedActions" hidden>
+        <button class="btn btn-primary" type="button" id="mineBtn">나도 세 장 뽑기</button>
+        <button class="btn btn-ghost" type="button" id="shareBtn2">이 결과 공유하기</button>
+      </div>
+      <p class="note" id="nextNote"></p>
+
+      <aside class="ad-slot" id="adSlot">
+        <div class="ad-box" id="adBox">
+          <!-- ▼ 쿠팡 파트너스 배너 코드 ▼ -->
+          <script src="https://ads-partners.coupang.com/g.js"></script>
+          <script>
+            if (window.PartnersCoupang) new PartnersCoupang.G({"id":1045517,"template":"carousel","trackingCode":"AF3579131","width":"320","height":"140","tsource":""});
+          </script>
+          <!-- ▲ 여기까지 ▲ -->
+        </div>
+        <p class="ad-note">이 사이트는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+      </aside>
+    </section>
+
+    <!-- guide:start -->
+    <section class="guide" aria-labelledby="guideTitle">
+      <h2 id="guideTitle">2027년 신년 타로는 이렇게 봐요</h2>
+      <p>타로 78장 가운데 삶의 큰 흐름을 보여 주는 메이저 아르카나 22장으로 한 해를 읽어요. 22장 가운데 7장을 섞어 펼쳐 두면, 마음이 가는 카드를 세 장 차례로 고르면 돼요. 첫 번째 카드는 상반기, 두 번째 카드는 하반기, 세 번째 카드는 한 해 전체를 여는 열쇠 자리에 놓여요.</p>
+      <p>세 장을 모두 고르면 카드가 차례로 뒤집히고, 한 해를 한 줄로 담은 문장과 올해의 키워드, 행운의 색과 행운의 달, 그리고 자리마다의 풀이가 나와요. 뽑기 전에 숨을 한 번 고르고 ‘새해에는 어떤 일이 생길까’, ‘올해 꼭 이루고 싶은 것’처럼 새해에 품은 질문을 하나 떠올려 보세요.</p>
+
+      <h2>세 자리는 이렇게 읽어요</h2>
+      <ul>
+        <li><strong>상반기 (1~6월)</strong><br>새해를 여는 여섯 달의 분위기예요. 무엇을 시작하고 어디에 힘을 쓰면 좋은지 알려 줘요.</li>
+        <li><strong>하반기 (7~12월)</strong><br>상반기에 뿌린 것이 한 해의 후반에 어떻게 이어지는지 보여 줘요. 결과 맨 위의 한 줄은 상반기 카드에서 하반기 카드로 흘러가는 한 해를 담았어요.</li>
+        <li><strong>올해의 열쇠</strong><br>한 해 내내 품고 다닐 태도나 조언이에요. 행운의 색도 이 카드에서 나와요. 일이 잘 안 풀릴 때 이 자리의 풀이를 다시 꺼내 읽어 보세요.</li>
+      </ul>
+
+      <h2>2027년은 정미년, 붉은 양의 해</h2>
+      <p>2027년은 육십갑자로 정미년(丁未年)이에요. 앞 글자 정(丁)은 오행에서 불에 속해 붉은색과 이어지고, 흔히 촛불이나 등불처럼 은은하게 오래 타는 불에 빗대요. 뒤 글자 미(未)는 열두 띠 가운데 양을 뜻해요. 그래서 2027년을 ‘붉은 양의 해’라고 불러요.</p>
+      <p>양은 무리를 지어 함께 지내는 온순한 동물이라, 예부터 화합과 평화, 따뜻한 마음을 떠올리게 하는 동물로 여겨져 왔어요. 크게 타오르기보다 곁을 오래 밝혀 주는 등불처럼, 서두르지 않고 주변과 함께 나아가는 한 해를 그려 보면 어떨까요.</p>
+      <p>띠가 바뀌는 날은 보통 음력 설날을 기준으로 봐요. 한국천문연구원 자료를 보면 2027년 설날은 양력 2월 7일이에요. 사주에서는 절기상 봄이 시작되는 입춘을 기준으로 보는데, 2027년 입춘은 2월 4일이에요.</p>
+
+      <h2>카드별 2027년 한 단어</h2>
+      <p>카드마다 2027년에 담긴 한 단어예요. 카드를 누르면 상반기, 하반기, 올해의 열쇠 자리에 나왔을 때의 풀이를 볼 수 있어요.</p>
+      <div class="card-grid"><a href="/tarot/cards/the-fool/#y2027"><div class="card-face sm" role="img" aria-label="바보 카드 그림"><span class="num">0</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="72" cy="26" r="11"/><path d="M14 74h44l8 16"/><path d="M38 74c-2-14 4-26 14-30"/><circle cx="54" cy="40" r="4"/><path d="M20 54c6-4 12-4 18 0"/></svg></span><span class="name">바보</span><span class="en">The Fool</span></div><small>새 출발</small></a><a href="/tarot/cards/the-magician/#y2027"><div class="card-face sm" role="img" aria-label="마법사 카드 그림"><span class="num">I</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 22c0-8 14-8 20 0s20 8 20 0-14-8-20 0-20 8-20 0z"/><path d="M50 38v32"/><circle cx="50" cy="36" r="3"/><path d="M22 78h56M28 78v12M72 78v12"/></svg></span><span class="name">마법사</span><span class="en">The Magician</span></div><small>실행</small></a><a href="/tarot/cards/the-high-priestess/#y2027"><div class="card-face sm" role="img" aria-label="여사제 카드 그림"><span class="num">II</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M24 18v64M36 18v64M64 18v64M76 18v64M20 18h20M60 18h20M20 82h20M60 82h20"/><path d="M54 40a11 11 0 1 0 0 20a8 8 0 1 1 0-20z"/></svg></span><span class="name">여사제</span><span class="en">The High Priestess</span></div><small>직감</small></a><a href="/tarot/cards/the-empress/#y2027"><div class="card-face sm" role="img" aria-label="여황제 카드 그림"><span class="num">III</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="40" r="14"/><path d="M50 54v24M40 68h20"/><path d="M22 86c5-10 5-22 0-32M78 86c-5-10-5-22 0-32"/></svg></span><span class="name">여황제</span><span class="en">The Empress</span></div><small>풍요</small></a><a href="/tarot/cards/the-emperor/#y2027"><div class="card-face sm" role="img" aria-label="황제 카드 그림"><span class="num">IV</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M24 66l-4-30 16 14 14-22 14 22 16-14-4 30z"/><path d="M24 76h52"/><circle cx="50" cy="24" r="3"/></svg></span><span class="name">황제</span><span class="en">The Emperor</span></div><small>단단한 기반</small></a><a href="/tarot/cards/the-hierophant/#y2027"><div class="card-face sm" role="img" aria-label="교황 카드 그림"><span class="num">V</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="30" cy="30" r="8"/><path d="M36 36l34 34M62 62l6-6M68 68l6-6"/><circle cx="70" cy="30" r="8"/><path d="M64 36L30 70M38 62l-6-6M32 68l-6-6"/></svg></span><span class="name">교황</span><span class="en">The Hierophant</span></div><small>배움</small></a><a href="/tarot/cards/the-lovers/#y2027"><div class="card-face sm" role="img" aria-label="연인 카드 그림"><span class="num">VI</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="40" cy="58" r="18"/><circle cx="60" cy="58" r="18"/><path d="M50 30c-3-6-12-4-10 3 1 4 10 9 10 9s9-5 10-9c2-7-7-9-10-3z"/></svg></span><span class="name">연인</span><span class="en">The Lovers</span></div><small>인연</small></a><a href="/tarot/cards/the-chariot/#y2027"><div class="card-face sm" role="img" aria-label="전차 카드 그림"><span class="num">VII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M26 40h48v22H26z"/><path d="M22 40l28-14 28 14"/><circle cx="34" cy="72" r="9"/><circle cx="66" cy="72" r="9"/><path d="M50 45l2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z"/></svg></span><span class="name">전차</span><span class="en">The Chariot</span></div><small>전진</small></a><a href="/tarot/cards/strength/#y2027"><div class="card-face sm" role="img" aria-label="힘 카드 그림"><span class="num">VIII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M36 22c0-6 10-6 14 0s14 6 14 0-10-6-14 0-14 6-14 0z"/><circle cx="50" cy="62" r="12"/><path d="M67.0 62.0L75.0 62.0M64.7 70.5L71.7 74.5M58.5 76.7L62.5 83.7M50.0 79.0L50.0 87.0M41.5 76.7L37.5 83.7M35.3 70.5L28.3 74.5M33.0 62.0L25.0 62.0M35.3 53.5L28.3 49.5M41.5 47.3L37.5 40.3M50.0 45.0L50.0 37.0M58.5 47.3L62.5 40.3M64.7 53.5L71.7 49.5"/></svg></span><span class="name">힘</span><span class="en">Strength</span></div><small>끈기</small></a><a href="/tarot/cards/the-hermit/#y2027"><div class="card-face sm" role="img" aria-label="은둔자 카드 그림"><span class="num">IX</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M64 14v76"/><path d="M38 34h20l-2 26H40z"/><path d="M42 34l6-8 6 8"/><path d="M48 40l1.6 4.4 4.4 1.6-4.4 1.6L48 52l-1.6-4.4-4.4-1.6 4.4-1.6z"/></svg></span><span class="name">은둔자</span><span class="en">The Hermit</span></div><small>내실</small></a><a href="/tarot/cards/wheel-of-fortune/#y2027"><div class="card-face sm" role="img" aria-label="운명의 수레바퀴 카드 그림"><span class="num">X</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="30"/><circle cx="50" cy="50" r="8"/><path d="M58.0 50.0L80.0 50.0M55.7 55.7L71.2 71.2M50.0 58.0L50.0 80.0M44.3 55.7L28.8 71.2M42.0 50.0L20.0 50.0M44.3 44.3L28.8 28.8M50.0 42.0L50.0 20.0M55.7 44.3L71.2 28.8"/></svg></span><span class="name">운명의 수레바퀴</span><span class="en">Wheel of Fortune</span></div><small>전환점</small></a><a href="/tarot/cards/justice/#y2027"><div class="card-face sm" role="img" aria-label="정의 카드 그림"><span class="num">XI</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 18v62M34 80h32M22 32h56"/><path d="M22 32l-10 22M22 32l10 22M78 32l-10 22M78 32l10 22"/><path d="M12 54a10 5 0 0 0 20 0zM68 54a10 5 0 0 0 20 0z"/></svg></span><span class="name">정의</span><span class="en">Justice</span></div><small>균형</small></a><a href="/tarot/cards/the-hanged-man/#y2027"><div class="card-face sm" role="img" aria-label="매달린 사람 카드 그림"><span class="num">XII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M24 18h52M50 18v40M50 40l-10 8M50 40l10 8"/><circle cx="50" cy="66" r="7"/><path d="M50 78v6M41 75l-5 4M59 75l5 4"/></svg></span><span class="name">매달린 사람</span><span class="en">The Hanged Man</span></div><small>숨 고르기</small></a><a href="/tarot/cards/death/#y2027"><div class="card-face sm" role="img" aria-label="죽음 카드 그림"><span class="num">XIII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 66h72"/><path d="M34 66a16 16 0 0 1 32 0"/><path d="M50 42v-8M35 48l-5-5M65 48l5-5"/><path d="M18 66V48h8v18M74 66V48h8v18"/><path d="M30 80h40"/></svg></span><span class="name">죽음</span><span class="en">Death</span></div><small>새 판 짜기</small></a><a href="/tarot/cards/temperance/#y2027"><div class="card-face sm" role="img" aria-label="절제 카드 그림"><span class="num">XIV</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M22 58h18l-3 18H25z"/><path d="M60 30h18l-3 18H63z"/><path d="M38 58c4-12 12-18 24-26" stroke-dasharray="3 4"/><path d="M30 86h40"/></svg></span><span class="name">절제</span><span class="en">Temperance</span></div><small>조화</small></a><a href="/tarot/cards/the-devil/#y2027"><div class="card-face sm" role="img" aria-label="악마 카드 그림"><span class="num">XV</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M32 40c-8-6-10-16-6-24M68 40c8-6 10-16 6-24"/><circle cx="50" cy="44" r="14"/><circle cx="40" cy="72" r="5"/><circle cx="50" cy="78" r="5"/><circle cx="60" cy="72" r="5"/></svg></span><span class="name">악마</span><span class="en">The Devil</span></div><small>뜨거운 열망</small></a><a href="/tarot/cards/the-tower/#y2027"><div class="card-face sm" role="img" aria-label="탑 카드 그림"><span class="num">XVI</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M38 86V34h24v52M35 34h30M43 48h4M53 48h4M43 62h4M53 62h4"/><path d="M72 10l-10 16h8l-8 14"/><path d="M26 20l6 6M24 30l4 2"/></svg></span><span class="name">탑</span><span class="en">The Tower</span></div><small>재정비</small></a><a href="/tarot/cards/the-star/#y2027"><div class="card-face sm" role="img" aria-label="별 카드 그림"><span class="num">XVII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 14l5 18 17-6-11 15 11 15-17-6-5 18-5-18-17 6 11-15-11-15 17 6z"/><circle cx="22" cy="24" r="2"/><circle cx="80" cy="22" r="2"/><circle cx="20" cy="60" r="2"/><circle cx="82" cy="56" r="2"/><path d="M18 84c8-4 16-4 24 0s16 4 24 0 10-3 16 0"/></svg></span><span class="name">별</span><span class="en">The Star</span></div><small>희망</small></a><a href="/tarot/cards/the-moon/#y2027"><div class="card-face sm" role="img" aria-label="달 카드 그림"><span class="num">XVIII</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M58 16a19 19 0 1 0 0 38a15 15 0 1 1 0-38z"/><path d="M50 62c-7 8 7 12 0 24"/><path d="M28 72v-5M72 72v-5M35 62v-4M65 62v-4"/></svg></span><span class="name">달</span><span class="en">The Moon</span></div><small>감수성</small></a><a href="/tarot/cards/the-sun/#y2027"><div class="card-face sm" role="img" aria-label="태양 카드 그림"><span class="num">XIX</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="15"/><path d="M71.0 50.0L82.0 50.0M68.2 60.5L77.7 66.0M60.5 68.2L66.0 77.7M50.0 71.0L50.0 82.0M39.5 68.2L34.0 77.7M31.8 60.5L22.3 66.0M29.0 50.0L18.0 50.0M31.8 39.5L22.3 34.0M39.5 31.8L34.0 22.3M50.0 29.0L50.0 18.0M60.5 31.8L66.0 22.3M68.2 39.5L77.7 34.0"/></svg></span><span class="name">태양</span><span class="en">The Sun</span></div><small>빛나는 시간</small></a><a href="/tarot/cards/judgement/#y2027"><div class="card-face sm" role="img" aria-label="심판 카드 그림"><span class="num">XX</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 28l38 14v8L20 64z"/><path d="M58 42h10v8H58"/><path d="M76 38l8-6M78 46h10M76 54l8 6"/><path d="M30 84h40M38 84v-8h24v8"/></svg></span><span class="name">심판</span><span class="en">Judgement</span></div><small>두 번째 기회</small></a><a href="/tarot/cards/the-world/#y2027"><div class="card-face sm" role="img" aria-label="세계 카드 그림"><span class="num">XXI</span><span class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="20" ry="30"/><path d="M44 20l6 4 6-4M44 80l6-4 6 4"/><circle cx="18" cy="18" r="4"/><circle cx="82" cy="18" r="4"/><circle cx="18" cy="82" r="4"/><circle cx="82" cy="82" r="4"/></svg></span><span class="name">세계</span><span class="en">The World</span></div><small>완성</small></a></div>
+
+      <h2>자주 묻는 질문</h2>
+      <details><summary>언제 뽑는 게 좋나요?</summary><div><p>새해를 앞두고 미리 봐도 좋고, 1월 1일이나 설날처럼 마음을 새로 다잡는 날에 봐도 좋아요. 날짜보다 중요한 건 마음이에요. 조용한 곳에서 한 해를 떠올릴 수 있을 때 뽑아 보세요.</p></div></details><details><summary>다시 뽑을 수 있나요?</summary><div><p>뽑은 세 장은 지금 쓰는 기기에 저장돼서, 다시 들어와도 같은 카드가 보여요. 가족이나 친구와 한 휴대폰으로 함께 본다면 결과 아래의 ‘다른 사람도 뽑아 보기’를 눌러 새로 뽑을 수 있어요. 지금 결과를 남겨 두고 싶다면 먼저 공유하기로 링크를 저장해 두세요.</p></div></details><details><summary>행운의 달은 어떻게 정해지나요?</summary><div><p>뽑은 세 장의 조합에 따라 정해져요. 같은 세 장을 같은 순서로 뽑으면 언제나 같은 달이 나와요.</p></div></details><details><summary>양띠 해는 언제부터인가요?</summary><div><p>보통은 음력 설날인 2027년 2월 7일부터 양띠 해로 봐요. 사주에서는 입춘인 2027년 2월 4일을 기준으로 해요.</p></div></details><details><summary>입력한 정보가 저장되나요?</summary><div><p>신년 타로는 이름이나 생년월일을 받지 않아요. 뽑은 카드 번호만 지금 쓰는 기기에 저장되고, 서버로 보내지 않아요.</p></div></details>
+
+      <h2>더 읽어 보기</h2>
+      <ul class="read-list"><li><a href="/read/tarot-basics/">타로 처음이라면: 78장의 카드와 하루 한 장 읽는 법<small>타로는 어디서 왔고, 메이저 아르카나와 마이너 아르카나는 무엇이 다를까요? 처음 타로를 접하는 사람을 위한 안내예요.</small></a></li></ul>
+    </section>
+    <!-- guide:end -->
+
+    <nav class="more" aria-label="다른 테스트">
+      <h2 class="more-title">다른 테스트도 해 보세요</h2>
+      <a class="more-item" href="/tarot/">
+        <span class="more-emblem"><svg viewBox="0 0 56 56" aria-hidden="true"><rect x="15" y="6" width="26" height="44" rx="3" fill="#25335e" stroke="#C8A45E" stroke-width="2.5"/><rect x="19" y="10" width="18" height="36" rx="1.5" fill="none" stroke="#C8A45E" stroke-opacity=".5"/><path d="M28 19l2.4 6.1 6.1 2.4-6.1 2.4L28 36l-2.4-6.1-6.1-2.4 6.1-2.4z" fill="#C8A45E"/></svg></span>
+        <span class="more-text"><strong>오늘의 타로 한 장</strong><small>하루 한 번, 끌리는 카드로 보는 오늘</small></span>
+      </a>
+      <a class="more-item" href="/past-life/">
+        <span class="more-emblem"><svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22" fill="#25335e" stroke="#C8A45E" stroke-width="3"/><path d="M15 21a15 15 0 0 1 11-9" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+        <span class="more-text"><strong>전생 체험</strong><small>나는 전생에 누구였을까</small></span>
+      </a>
+      <a class="more-item" href="/bond/">
+        <span class="more-emblem"><svg viewBox="0 0 56 56" aria-hidden="true"><path d="M12 30c8 10 12-10 16-2s8 12 16 2" fill="none" stroke="#C8372D" stroke-width="2.5" stroke-linecap="round"/><circle cx="11" cy="28" r="7" fill="#25335e" stroke="#C8A45E" stroke-width="2.5"/><circle cx="45" cy="28" r="7" fill="#25335e" stroke="#C8A45E" stroke-width="2.5"/></svg></span>
+        <span class="more-text"><strong>전생의 인연 궁합</strong><small>두 사람은 전생에 어떤 사이였을까</small></span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="site-foot">
+    <p>재미로 보는 신년 타로예요. 뽑은 카드는 이 기기에만 저장돼요.</p>
+    <p class="foot-links"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy.html">개인정보처리방침</a></p>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/assets/site.js?v=7a77368cf0"></script>
+<script>
+/* 카드 그림과 2027년 풀이: python3 _build/build.py 가 채워요 (오늘의 타로 카드 + _build/content_newyear.py) */
+/* data:start */
+window.NY_CARDS = [{"num": "0", "ko": "바보", "en": "The Fool", "slug": "the-fool", "color": {"n": "노란색", "c": "#E8C547"}, "art": "<circle cx=\"72\" cy=\"26\" r=\"11\"/><path d=\"M14 74h44l8 16\"/><path d=\"M38 74c-2-14 4-26 14-30\"/><circle cx=\"54\" cy=\"40\" r=\"4\"/><path d=\"M20 54c6-4 12-4 18 0\"/>"}, {"num": "I", "ko": "마법사", "en": "The Magician", "slug": "the-magician", "color": {"n": "붉은색", "c": "#C0392B"}, "art": "<path d=\"M30 22c0-8 14-8 20 0s20 8 20 0-14-8-20 0-20 8-20 0z\"/><path d=\"M50 38v32\"/><circle cx=\"50\" cy=\"36\" r=\"3\"/><path d=\"M22 78h56M28 78v12M72 78v12\"/>"}, {"num": "II", "ko": "여사제", "en": "The High Priestess", "slug": "the-high-priestess", "color": {"n": "은빛", "c": "#B8BEC8"}, "art": "<path d=\"M24 18v64M36 18v64M64 18v64M76 18v64M20 18h20M60 18h20M20 82h20M60 82h20\"/><path d=\"M54 40a11 11 0 1 0 0 20a8 8 0 1 1 0-20z\"/>"}, {"num": "III", "ko": "여황제", "en": "The Empress", "slug": "the-empress", "color": {"n": "연둣빛", "c": "#9BC25A"}, "art": "<circle cx=\"50\" cy=\"40\" r=\"14\"/><path d=\"M50 54v24M40 68h20\"/><path d=\"M22 86c5-10 5-22 0-32M78 86c-5-10-5-22 0-32\"/>"}, {"num": "IV", "ko": "황제", "en": "The Emperor", "slug": "the-emperor", "color": {"n": "진홍색", "c": "#9E2B25"}, "art": "<path d=\"M24 66l-4-30 16 14 14-22 14 22 16-14-4 30z\"/><path d=\"M24 76h52\"/><circle cx=\"50\" cy=\"24\" r=\"3\"/>"}, {"num": "V", "ko": "교황", "en": "The Hierophant", "slug": "the-hierophant", "color": {"n": "갈색", "c": "#8B5E3C"}, "art": "<circle cx=\"30\" cy=\"30\" r=\"8\"/><path d=\"M36 36l34 34M62 62l6-6M68 68l6-6\"/><circle cx=\"70\" cy=\"30\" r=\"8\"/><path d=\"M64 36L30 70M38 62l-6-6M32 68l-6-6\"/>"}, {"num": "VI", "ko": "연인", "en": "The Lovers", "slug": "the-lovers", "color": {"n": "분홍색", "c": "#E58FA8"}, "art": "<circle cx=\"40\" cy=\"58\" r=\"18\"/><circle cx=\"60\" cy=\"58\" r=\"18\"/><path d=\"M50 30c-3-6-12-4-10 3 1 4 10 9 10 9s9-5 10-9c2-7-7-9-10-3z\"/>"}, {"num": "VII", "ko": "전차", "en": "The Chariot", "slug": "the-chariot", "color": {"n": "남색", "c": "#2F4A8A"}, "art": "<path d=\"M26 40h48v22H26z\"/><path d=\"M22 40l28-14 28 14\"/><circle cx=\"34\" cy=\"72\" r=\"9\"/><circle cx=\"66\" cy=\"72\" r=\"9\"/><path d=\"M50 45l2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z\"/>"}, {"num": "VIII", "ko": "힘", "en": "Strength", "slug": "strength", "color": {"n": "주황색", "c": "#E08A3C"}, "art": "<path d=\"M36 22c0-6 10-6 14 0s14 6 14 0-10-6-14 0-14 6-14 0z\"/><circle cx=\"50\" cy=\"62\" r=\"12\"/><path d=\"M67.0 62.0L75.0 62.0M64.7 70.5L71.7 74.5M58.5 76.7L62.5 83.7M50.0 79.0L50.0 87.0M41.5 76.7L37.5 83.7M35.3 70.5L28.3 74.5M33.0 62.0L25.0 62.0M35.3 53.5L28.3 49.5M41.5 47.3L37.5 40.3M50.0 45.0L50.0 37.0M58.5 47.3L62.5 40.3M64.7 53.5L71.7 49.5\"/>"}, {"num": "IX", "ko": "은둔자", "en": "The Hermit", "slug": "the-hermit", "color": {"n": "회색", "c": "#8A8F98"}, "art": "<path d=\"M64 14v76\"/><path d=\"M38 34h20l-2 26H40z\"/><path d=\"M42 34l6-8 6 8\"/><path d=\"M48 40l1.6 4.4 4.4 1.6-4.4 1.6L48 52l-1.6-4.4-4.4-1.6 4.4-1.6z\"/>"}, {"num": "X", "ko": "운명의 수레바퀴", "en": "Wheel of Fortune", "slug": "wheel-of-fortune", "color": {"n": "황금색", "c": "#D4A73A"}, "art": "<circle cx=\"50\" cy=\"50\" r=\"30\"/><circle cx=\"50\" cy=\"50\" r=\"8\"/><path d=\"M58.0 50.0L80.0 50.0M55.7 55.7L71.2 71.2M50.0 58.0L50.0 80.0M44.3 55.7L28.8 71.2M42.0 50.0L20.0 50.0M44.3 44.3L28.8 28.8M50.0 42.0L50.0 20.0M55.7 44.3L71.2 28.8\"/>"}, {"num": "XI", "ko": "정의", "en": "Justice", "slug": "justice", "color": {"n": "청록색", "c": "#2E8B8B"}, "art": "<path d=\"M50 18v62M34 80h32M22 32h56\"/><path d=\"M22 32l-10 22M22 32l10 22M78 32l-10 22M78 32l10 22\"/><path d=\"M12 54a10 5 0 0 0 20 0zM68 54a10 5 0 0 0 20 0z\"/>"}, {"num": "XII", "ko": "매달린 사람", "en": "The Hanged Man", "slug": "the-hanged-man", "color": {"n": "하늘색", "c": "#7FB4DE"}, "art": "<path d=\"M24 18h52M50 18v40M50 40l-10 8M50 40l10 8\"/><circle cx=\"50\" cy=\"66\" r=\"7\"/><path d=\"M50 78v6M41 75l-5 4M59 75l5 4\"/>"}, {"num": "XIII", "ko": "죽음", "en": "Death", "slug": "death", "color": {"n": "흰색", "c": "#F4F2EC"}, "art": "<path d=\"M14 66h72\"/><path d=\"M34 66a16 16 0 0 1 32 0\"/><path d=\"M50 42v-8M35 48l-5-5M65 48l5-5\"/><path d=\"M18 66V48h8v18M74 66V48h8v18\"/><path d=\"M30 80h40\"/>"}, {"num": "XIV", "ko": "절제", "en": "Temperance", "slug": "temperance", "color": {"n": "청자색", "c": "#7FB3A6"}, "art": "<path d=\"M22 58h18l-3 18H25z\"/><path d=\"M60 30h18l-3 18H63z\"/><path d=\"M38 58c4-12 12-18 24-26\" stroke-dasharray=\"3 4\"/><path d=\"M30 86h40\"/>"}, {"num": "XV", "ko": "악마", "en": "The Devil", "slug": "the-devil", "color": {"n": "검붉은색", "c": "#6B1E2A"}, "art": "<path d=\"M32 40c-8-6-10-16-6-24M68 40c8-6 10-16 6-24\"/><circle cx=\"50\" cy=\"44\" r=\"14\"/><circle cx=\"40\" cy=\"72\" r=\"5\"/><circle cx=\"50\" cy=\"78\" r=\"5\"/><circle cx=\"60\" cy=\"72\" r=\"5\"/>"}, {"num": "XVI", "ko": "탑", "en": "The Tower", "slug": "the-tower", "color": {"n": "회청색", "c": "#5B6B82"}, "art": "<path d=\"M38 86V34h24v52M35 34h30M43 48h4M53 48h4M43 62h4M53 62h4\"/><path d=\"M72 10l-10 16h8l-8 14\"/><path d=\"M26 20l6 6M24 30l4 2\"/>"}, {"num": "XVII", "ko": "별", "en": "The Star", "slug": "the-star", "color": {"n": "보랏빛", "c": "#7A5BA6"}, "art": "<path d=\"M50 14l5 18 17-6-11 15 11 15-17-6-5 18-5-18-17 6 11-15-11-15 17 6z\"/><circle cx=\"22\" cy=\"24\" r=\"2\"/><circle cx=\"80\" cy=\"22\" r=\"2\"/><circle cx=\"20\" cy=\"60\" r=\"2\"/><circle cx=\"82\" cy=\"56\" r=\"2\"/><path d=\"M18 84c8-4 16-4 24 0s16 4 24 0 10-3 16 0\"/>"}, {"num": "XVIII", "ko": "달", "en": "The Moon", "slug": "the-moon", "color": {"n": "쪽빛", "c": "#3A4F8C"}, "art": "<path d=\"M58 16a19 19 0 1 0 0 38a15 15 0 1 1 0-38z\"/><path d=\"M50 62c-7 8 7 12 0 24\"/><path d=\"M28 72v-5M72 72v-5M35 62v-4M65 62v-4\"/>"}, {"num": "XIX", "ko": "태양", "en": "The Sun", "slug": "the-sun", "color": {"n": "해바라기색", "c": "#F2B33D"}, "art": "<circle cx=\"50\" cy=\"50\" r=\"15\"/><path d=\"M71.0 50.0L82.0 50.0M68.2 60.5L77.7 66.0M60.5 68.2L66.0 77.7M50.0 71.0L50.0 82.0M39.5 68.2L34.0 77.7M31.8 60.5L22.3 66.0M29.0 50.0L18.0 50.0M31.8 39.5L22.3 34.0M39.5 31.8L34.0 22.3M50.0 29.0L50.0 18.0M60.5 31.8L66.0 22.3M68.2 39.5L77.7 34.0\"/>"}, {"num": "XX", "ko": "심판", "en": "Judgement", "slug": "judgement", "color": {"n": "산호색", "c": "#E07A5F"}, "art": "<path d=\"M20 28l38 14v8L20 64z\"/><path d=\"M58 42h10v8H58\"/><path d=\"M76 38l8-6M78 46h10M76 54l8 6\"/><path d=\"M30 84h40M38 84v-8h24v8\"/>"}, {"num": "XXI", "ko": "세계", "en": "The World", "slug": "the-world", "color": {"n": "초록색", "c": "#3E8E5E"}, "art": "<ellipse cx=\"50\" cy=\"50\" rx=\"20\" ry=\"30\"/><path d=\"M44 20l6 4 6-4M44 80l6-4 6 4\"/><circle cx=\"18\" cy=\"18\" r=\"4\"/><circle cx=\"82\" cy=\"18\" r=\"4\"/><circle cx=\"18\" cy=\"82\" r=\"4\"/><circle cx=\"82\" cy=\"82\" r=\"4\"/>"}];
+window.NY_TEXT = [{"word": "새 출발", "h1": "새해가 시작되면 해 보지 않은 일에 마음이 끌려요. 배우기, 여행, 새 모임처럼 미뤄 둔 시작 하나를 상반기에 실행해 보세요.", "h2": "하반기에는 가볍게 시작한 일이 뜻밖의 길로 이어져요. 처음 계획과 달라져도 괜찮으니 흐름을 따라가며 경험을 넓혀 보세요.", "key": "완벽하게 준비될 때까지 기다리지 않는 것이 올해의 열쇠예요. 작게라도 먼저 시작한 사람이 더 많은 기회를 만나요."}, {"word": "실행", "h1": "머릿속에만 있던 계획을 실제로 옮기기 좋은 상반기예요. 필요한 재능과 도구는 이미 갖고 있으니 첫 결과물을 빨리 보여 주세요.", "h2": "하반기에는 상반기에 시작한 일이 눈에 보이는 성과로 돌아와요. 내 실력을 보여 줄 자리가 생기니 망설이지 마세요.", "key": "말보다 실행이 올해의 열쇠예요. 생각한 일을 일주일 안에 한 걸음이라도 움직이는 습관이 한 해를 바꿔요."}, {"word": "직감", "h1": "상반기는 겉으로 크게 움직이기보다 조용히 준비하는 시기예요. 공부하고 기록하며 정보를 모아 두면 하반기에 큰 힘이 돼요.", "h2": "하반기에는 그동안 쌓아 둔 생각이 답이 되어 떠올라요. 남들보다 먼저 기회를 알아차리게 되니 직감을 믿어 보세요.", "key": "마음속 작은 목소리에 귀 기울이는 것이 올해의 열쇠예요. 중요한 결정은 하루쯤 묵혀 두면 더 나은 답이 보여요."}, {"word": "풍요", "h1": "상반기에는 마음과 생활에 여유가 생겨요. 집이나 몸, 취미처럼 나를 돌보는 일에 시간과 돈을 쓰면 그만큼 돌아와요.", "h2": "하반기에는 정성껏 가꾼 것들이 결실을 맺어요. 수입이나 관계에서 넉넉함을 느끼고, 주변과 나눌 일도 많아져요.", "key": "나를 아끼는 것이 올해의 열쇠예요. 스스로를 잘 돌볼수록 사람도 돈도 자연스럽게 모여요."}, {"word": "단단한 기반", "h1": "상반기는 흐트러진 생활과 계획을 정리하고 틀을 세우기 좋은 때예요. 예산, 일정, 목표를 숫자로 적어 두면 한 해가 단단해져요.", "h2": "하반기에는 책임 있는 자리나 역할이 주어질 수 있어요. 상반기에 세운 원칙을 지키면 사람들의 믿음을 얻어요.", "key": "흔들리지 않는 기준을 세우는 것이 올해의 열쇠예요. 다만 고집과 원칙을 헷갈리지 않도록 가끔은 주변 의견도 들어 보세요."}, {"word": "배움", "h1": "상반기에는 좋은 스승이나 선배를 만날 운이 있어요. 자격증, 수업, 공부 모임처럼 체계적으로 배우는 일을 시작하기 좋아요.", "h2": "하반기에는 배운 것을 바탕으로 누군가에게 조언하는 자리에 서게 돼요. 기본을 지킨 만큼 신뢰가 쌓이는 시기예요.", "key": "모르는 것을 묻는 용기가 올해의 열쇠예요. 혼자 끙끙대기보다 먼저 길을 간 사람에게 물으면 시간이 크게 줄어요."}, {"word": "인연", "h1": "상반기에는 마음이 통하는 사람을 만나거나 지금의 관계가 한층 가까워져요. 새로운 모임에 나가 보면 좋은 인연이 닿을 수 있어요.", "h2": "하반기에는 중요한 선택의 순간이 찾아와요. 조건보다 마음이 더 끌리는 쪽을 고르면 후회가 적어요.", "key": "내가 진심으로 원하는 것을 아는 것이 올해의 열쇠예요. 사람이든 일이든 마음과 맞는 쪽을 고를 때 한 해가 가벼워져요."}, {"word": "전진", "h1": "상반기에는 목표를 정하고 힘차게 밀고 나가기 좋아요. 망설이던 도전이 있다면 봄이 가기 전에 출발하세요.", "h2": "하반기에는 속도가 붙으면서 경쟁에서 앞서 나가요. 너무 달리다 지치지 않게 쉬는 날도 미리 정해 두세요.", "key": "방향을 정하고 끝까지 가는 의지가 올해의 열쇠예요. 여러 길을 기웃거리기보다 한 길에 힘을 모으세요."}, {"word": "끈기", "h1": "상반기에는 마음먹은 만큼 빨리 풀리지 않아 답답할 수 있어요. 그래도 부드럽게 버티면 어려운 사람과 일도 조금씩 내 편이 돼요.", "h2": "하반기에는 꾸준히 해 온 일이 힘을 발휘해요. 운동, 공부, 저축처럼 매일 쌓은 것이 눈에 띄는 차이를 만들어요.", "key": "조급해하지 않는 것이 올해의 열쇠예요. 큰소리보다 다정한 끈기가 결국 원하는 것을 가져다줘요."}, {"word": "내실", "h1": "상반기는 바깥 활동을 조금 줄이고 나를 돌아보기 좋은 시기예요. 혼자만의 시간을 갖고 정말 원하는 것이 무엇인지 정리해 보세요.", "h2": "하반기에는 깊이 파고든 공부나 일이 나만의 무기가 돼요. 조용히 쌓은 실력을 알아봐 주는 사람이 나타나요.", "key": "남과 비교하지 않는 것이 올해의 열쇠예요. 내 속도와 방향을 지키면 겉보다 속이 꽉 찬 한 해가 돼요."}, {"word": "전환점", "h1": "상반기에는 생각지 못한 기회나 변화가 찾아와요. 이사, 이직, 새 만남처럼 흐름이 바뀌는 신호가 오면 눈여겨보세요.", "h2": "하반기에는 바뀐 흐름에 올라타면서 일이 빠르게 풀려요. 오래 연락이 없던 사람에게서 반가운 소식이 올 수도 있어요.", "key": "바람이 불 때 돛을 올리는 것이 올해의 열쇠예요. 기회가 보이면 너무 오래 재지 말고 한 발 먼저 움직이세요."}, {"word": "균형", "h1": "상반기에는 계약, 서류, 돈 계산처럼 분명히 해야 할 일이 많아요. 꼼꼼하게 확인할수록 나중에 생길 문제를 막을 수 있어요.", "h2": "하반기에는 그동안 한 만큼 정직한 결과가 돌아와요. 공정하게 판단해 온 사람에게는 인정과 보상이 따라요.", "key": "감정보다 사실을 먼저 보는 것이 올해의 열쇠예요. 주고받는 것의 균형을 살피면 관계도 돈도 깔끔해져요."}, {"word": "숨 고르기", "h1": "상반기에는 일이 잠시 멈춘 것처럼 느껴질 수 있어요. 억지로 밀기보다 한 걸음 물러서서 다른 방법을 찾아보는 시간으로 써 보세요.", "h2": "하반기에는 기다린 시간이 의미를 드러내요. 관점을 바꿔 본 덕분에 처음에는 보이지 않던 길이 열려요.", "key": "서두르지 않는 여유가 올해의 열쇠예요. 멈춰 있는 것처럼 보여도 그 시간이 다음 도약을 준비하고 있어요."}, {"word": "새 판 짜기", "h1": "상반기에는 낡은 습관이나 맞지 않는 관계를 정리하게 돼요. 이름은 무섭지만, 비워야 새것이 들어올 자리가 생긴다는 뜻이에요.", "h2": "하반기에는 정리한 자리에 새로운 일과 사람이 들어와요. 한 해가 끝날 즈음이면 작년과는 꽤 다른 내가 되어 있을 거예요.", "key": "놓아야 할 것을 놓는 용기가 올해의 열쇠예요. 미련이 남는 것 하나를 정리하면 한 해가 가벼워져요."}, {"word": "조화", "h1": "상반기에는 일과 쉼, 나와 남 사이의 균형을 맞추기 좋아요. 무리한 계획보다 꾸준히 할 수 있는 만큼만 정해 보세요.", "h2": "하반기에는 여러 사람의 의견을 잘 섞어 좋은 결과를 만들어요. 몸과 마음이 회복되면서 일상에 안정감이 생겨요.", "key": "적당히의 힘을 믿는 것이 올해의 열쇠예요. 지나치지도 모자라지도 않게 조절하면 오래 갈 수 있어요."}, {"word": "뜨거운 열망", "h1": "상반기에는 갖고 싶은 것, 해 보고 싶은 것이 많아져요. 욕심이 힘이 되기도 하지만 충동구매와 무리한 약속은 조심하세요.", "h2": "하반기에는 나를 묶어 두던 습관이나 관계를 알아차리게 돼요. 싫은 것에 싫다고 말하는 순간 훨씬 자유로워져요.", "key": "진짜 원하는 것과 잠깐의 유혹을 구별하는 것이 올해의 열쇠예요. 큰돈이나 쉬운 길 이야기는 한 번 더 따져 보세요."}, {"word": "재정비", "h1": "상반기에는 예상하지 못한 일로 계획이 흔들릴 수 있어요. 당황하기보다 무엇이 진짜 중요한지 확인하는 기회로 삼으세요.", "h2": "하반기에는 흔들린 자리에 더 튼튼한 것을 다시 세워요. 고비를 지나며 오히려 내가 원하던 방향이 분명해져요.", "key": "변화를 겁내지 않는 것이 올해의 열쇠예요. 흔들릴 때 드러나는 기초를 다시 다지면 다음 해가 더 단단해져요."}, {"word": "희망", "h1": "상반기에는 마음이 맑아지고 오래 품은 바람에 다시 불이 붙어요. 이루고 싶은 것을 적어 두면 길이 하나씩 보여요.", "h2": "하반기에는 지난 상처가 아물고 좋은 영감이 찾아와요. 창작이나 새 계획을 펼치기에 아주 좋은 시기예요.", "key": "희망을 놓지 않는 것이 올해의 열쇠예요. 작은 목표를 이루며 스스로를 믿어 주면 큰 꿈도 가까워져요."}, {"word": "감수성", "h1": "상반기에는 마음이 이리저리 흔들리고 걱정이 늘 수 있어요. 막연한 불안은 글로 적어 보고, 확인할 수 있는 것부터 하나씩 확인하세요.", "h2": "하반기에는 섬세한 감수성이 오히려 강점이 돼요. 글, 그림, 음악처럼 마음을 표현하는 일에서 좋은 결과가 나와요.", "key": "확실하지 않은 것은 확인하고 넘어가는 것이 올해의 열쇠예요. 혼자 추측하기보다 직접 물어보는 쪽이 마음을 편하게 해요."}, {"word": "빛나는 시간", "h1": "상반기부터 기운이 밝고 자신감이 넘쳐요. 하고 싶은 일을 드러내고 사람들 앞에 나서면 좋은 반응이 따라와요.", "h2": "하반기에는 노력한 만큼 인정받고 기쁜 일이 이어져요. 가족, 친구와 함께 축하할 일이 많은 한 해가 될 거예요.", "key": "마음껏 빛나도 된다고 스스로 허락하는 것이 올해의 열쇠예요. 겸손도 좋지만 올해는 내 성과를 자신 있게 보여 주세요."}, {"word": "두 번째 기회", "h1": "상반기에는 예전에 놓친 기회나 사람이 다시 찾아와요. 그때와 달라진 나를 믿고 이번에는 다르게 답해 보세요.", "h2": "하반기에는 미뤄 둔 결정을 내리고 새 출발을 하게 돼요. 합격이나 반가운 연락 같은 좋은 소식을 기대해도 좋아요.", "key": "다시 해 보는 용기가 올해의 열쇠예요. 한 번 잘 안 된 일도 지금의 나라면 다르게 해낼 수 있어요."}, {"word": "완성", "h1": "상반기에는 오래 붙잡고 있던 일을 마무리할 힘이 생겨요. 끝맺음을 깔끔하게 하면 다음 단계가 자연스럽게 열려요.", "h2": "하반기에는 목표를 이루거나 더 넓은 무대로 나갈 기회가 와요. 여행이나 해외, 새로운 분야와의 인연도 기대해 볼 만해요.", "key": "마무리를 잘하는 것이 올해의 열쇠예요. 하나를 제대로 끝내고 나를 칭찬해 주면 다음 여정이 더 크게 펼쳐져요."}];
+/* data:end */
+</script>
+<script>
+(function () {
+  'use strict';
+  var S = window.Site;
+  var CARDS = window.NY_CARDS, NY = window.NY_TEXT;
+
+  var POS = [
+    { key: 'h1', hint: '첫 번째 카드는 상반기(1~6월)를 비춰요. 끌리는 카드를 골라 주세요' },
+    { key: 'h2', hint: '두 번째 카드는 하반기(7~12월)예요' },
+    { key: 'key', hint: '마지막 카드는 올해의 열쇠예요' }
+  ];
+  var STORE_KEY = 'pstlf-newyear-2027';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var deck = $('deck');
+  var slots = $('slots');
+  var picks = [];
+  var current = null; // { ids, shared }
+  var timers = [];
+
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+  // 받침에 따라 '로' 또는 '으로' (ㄹ 받침은 '로')
+  function ro(word) {
+    var c = word.charCodeAt(word.length - 1);
+    if (c < 0xAC00 || c > 0xD7A3) return '로';
+    var jong = (c - 0xAC00) % 28;
+    return jong === 0 || jong === 8 ? '로' : '으로';
+  }
+  function yearTitle(ids) {
+    return titleParts(ids).join(' ');
+  }
+  // 제목이 '숨 / 고르기'처럼 낱말 가운데서 줄이 바뀌지 않게 덩어리로 나눠요
+  function titleParts(ids) {
+    var a = NY[ids[0]].word, b = NY[ids[1]].word;
+    return [a + '에서', b + ro(b), '가는 해'];
+  }
+  window.NewYearTarot = { ro: ro, title: yearTitle };
+
+  function artSvg(card) {
+    return '<svg viewBox="0 0 100 100" aria-hidden="true">' + card.art + '</svg>';
+  }
+
+  function fillFace(face, idx) {
+    var c = CARDS[idx];
+    face.innerHTML = '<span class="tface-num"></span><span class="tface-art">' + artSvg(c) + '</span><span class="tface-name"></span><span class="tface-en"></span>';
+    face.querySelector('.tface-num').textContent = c.num;
+    face.querySelector('.tface-name').textContent = c.ko;
+    face.querySelector('.tface-en').textContent = c.en;
+  }
+
+  /* ── 카드 7장 펼치기 ─────────────────────────── */
+  function fanStep() {
+    var w = deck.clientWidth || 350;
+    return Math.max(24, Math.min(46, (w - 96 - 40) / 6));
+  }
+  function placeCard(btn, k, step) {
+    btn.style.setProperty('--x', Math.round(k * step));
+    btn.style.setProperty('--y', Math.round(k * k * 2.4));
+    btn.style.setProperty('--r', k * 4);
+  }
+  window.addEventListener('resize', function () {
+    if (deck.classList.contains('is-done')) return;
+    var step = fanStep();
+    Array.prototype.forEach.call(deck.querySelectorAll('.tcard'), function (btn, pos) { placeCard(btn, pos - 3, step); });
+  });
+
+  function shuffledCards(n) {
+    var arr = CARDS.map(function (_, i) { return i; });
+    var rand = new Uint32Array(arr.length);
+    (window.crypto || window.msCrypto).getRandomValues(rand);
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = rand[i] % (i + 1);
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr.slice(0, n);
+  }
+
+  /* ── 세 자리 ─────────────────────────── */
+  function slotBox(pos) { return slots.children[pos].querySelector('.slot-card'); }
+
+  function resetSlots() {
+    Array.prototype.forEach.call(slots.children, function (li) {
+      li.className = 'slot';
+      var box = li.querySelector('.slot-card');
+      box.innerHTML = '';
+      box.removeAttribute('role');
+      box.removeAttribute('aria-label');
+    });
+  }
+
+  function markNext() {
+    Array.prototype.forEach.call(slots.children, function (li, pos) {
+      li.classList.toggle('is-next', pos === picks.length && picks.length < 3);
+    });
+  }
+
+  function fillSlot(pos, idx) {
+    var box = slotBox(pos);
+    box.innerHTML = '<span class="scard"><span class="scard-inner"><span class="tback"></span><span class="tface"></span></span></span>';
+    fillFace(box.querySelector('.tface'), idx);
+    box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', '뒤집힌 카드');
+    slots.children[pos].classList.add('is-filled');
+  }
+
+  function flipSlot(pos, idx) {
+    var box = slotBox(pos);
+    box.querySelector('.scard').classList.add('is-flipped');
+    box.setAttribute('aria-label', CARDS[idx].ko + ' 카드');
+  }
+
+  function setHint() {
+    $('hint').textContent = picks.length < 3 ? POS[picks.length].hint : '세 장을 뒤집는 중이에요';
+  }
+
+  /* ── 뽑기 ─────────────────────────── */
+  function layDeck() {
+    clearTimers();
+    current = null;
+    picks = [];
+    deck.className = 'deck';
+    deck.innerHTML = '';
+    shuffledCards(7).forEach(function (cardIdx, pos) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tcard';
+      placeCard(btn, pos - 3, fanStep());
+      btn.setAttribute('aria-label', (pos + 1) + '번째 카드 고르기');
+      btn.innerHTML = '<span class="tcard-inner"><span class="tback"></span></span>';
+      btn.dataset.card = cardIdx;
+      btn.addEventListener('click', function () { choose(btn); });
+      deck.appendChild(btn);
+    });
+    resetSlots();
+    markNext();
+    $('result').hidden = true;
+    $('sharedNote').hidden = true;
+    $('hint').hidden = false;
+    setHint();
+    $('lede').textContent = '새해를 떠올리며 끌리는 카드를 세 장 차례로 골라 주세요.';
+  }
+
+  function choose(btn) {
+    if (picks.length >= 3 || btn.disabled) return;
+    var idx = Number(btn.dataset.card);
+    var pos = picks.length;
+    picks.push(idx);
+    btn.disabled = true;
+    btn.classList.add('is-taken');
+    fillSlot(pos, idx);
+    markNext();
+    setHint();
+    if (picks.length < 3) return;
+
+    var ids = picks.slice();
+    S.storeSet(STORE_KEY, { cards: ids, date: S.todayKey() });
+    Array.prototype.forEach.call(deck.querySelectorAll('.tcard'), function (b) { b.disabled = true; });
+    var wait = S.reduceMotion ? 0 : 520, step = S.reduceMotion ? 0 : 420;
+    later(function () { deck.classList.add('is-done'); }, wait);
+    ids.forEach(function (idx2, p) { later(function () { flipSlot(p, idx2); }, wait + p * step); });
+    later(function () { reveal(ids, false); }, S.reduceMotion ? 0 : wait + 2 * step + 950);
+  }
+
+  // 세 장을 이미 뒤집힌 상태로 보여 줘요 (이미 뽑았거나 친구 링크)
+  function showStatic(ids, shared) {
+    clearTimers();
+    picks = ids.slice();
+    deck.className = 'deck is-done no-anim';
+    deck.innerHTML = '';
+    slots.classList.add('no-anim');
+    resetSlots();
+    ids.forEach(function (idx, p) { fillSlot(p, idx); flipSlot(p, idx); });
+    markNext();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { slots.classList.remove('no-anim'); deck.classList.remove('no-anim'); });
+    });
+    $('hint').hidden = true;
+    reveal(ids, shared);
+  }
+
+  function reveal(ids, shared) {
+    current = { ids: ids, shared: shared };
+    var key = CARDS[ids[2]];
+    var r = S.rng(S.hash('2027|newyear|' + ids.join('-')));
+
+    $('hint').hidden = true;
+    $('lede').textContent = shared ? '친구가 뽑은 세 장이에요.' : '2027년을 비추는 세 장이에요.';
+    $('rLead').textContent = shared ? '친구의 2027년은' : '당신의 2027년은';
+    var title = $('rTitle');
+    title.textContent = '';
+    titleParts(ids).forEach(function (part, k) {
+      if (k) title.appendChild(document.createTextNode(' '));
+      var span = document.createElement('span');
+      span.className = 'nw';
+      span.textContent = part;
+      title.appendChild(span);
+    });
+    $('rWords').textContent = ids.map(function (i) { return NY[i].word; }).join(' · ');
+    $('rSwatch').style.background = key.color.c;
+    $('rColor').textContent = key.color.n;
+    $('rMonth').textContent = S.range(r, 1, 12) + '월';
+    POS.forEach(function (p, k) {
+      $('rCard' + k).textContent = CARDS[ids[k]].ko + ' 카드';
+      $('rText' + k).textContent = NY[ids[k]][p.key];
+    });
+    var links = $('rLinks');
+    links.textContent = '카드 뜻 더 보기 ';
+    ids.forEach(function (i) {
+      var a = document.createElement('a');
+      a.href = '/tarot/cards/' + CARDS[i].slug + '/';
+      a.textContent = CARDS[i].ko;
+      links.appendChild(a);
+    });
+    $('rSign').textContent = '2027 정미년 · ' + ids.map(function (i) { return CARDS[i].num; }).join(' · ');
+
+    $('sharedNote').hidden = !shared;
+    $('ownActions').hidden = shared;
+    $('sharedActions').hidden = !shared;
+    $('nextNote').textContent = shared ? '' : '뽑은 세 장은 이 기기에 저장돼요. 다시 와도 같은 카드가 보여요.';
+
+    var scroll = $('scroll');
+    scroll.classList.remove('is-open');
+    $('result').hidden = false;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { scroll.classList.add('is-open'); });
+    });
+    S.setQuery('c=' + ids.join('-'));
+  }
+
+  /* ── 주소와 저장 ─────────────────────────── */
+  function parseIds(s) {
+    if (typeof s !== 'string' || !/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(s)) return null;
+    var ids = s.split('-').map(Number);
+    if (!CARDS[ids[0]] || !CARDS[ids[1]] || !CARDS[ids[2]]) return null;
+    if (ids[0] === ids[1] || ids[1] === ids[2] || ids[0] === ids[2]) return null;
+    return ids;
+  }
+  function savedIds() {
+    var v = S.storeGet(STORE_KEY);
+    return v && Array.isArray(v.cards) ? parseIds(v.cards.join('-')) : null;
+  }
+
+  function share() {
+    if (!current) return;
+    var title = yearTitle(current.ids);
+    S.share({
+      title: '2027년 신년 타로',
+      text: current.shared
+        ? '2027년 신년 타로 결과는 \'' + title + '\'. 너의 새해 카드도 세 장 뽑아 봐.'
+        : '내 2027년은 \'' + title + '\'래! 너의 새해 카드도 세 장 뽑아 봐.',
+      url: S.baseUrl() + '?c=' + current.ids.join('-')
+    });
+  }
+
+  function startOwn() {
+    S.setQuery('');
+    var mine = savedIds();
+    if (mine) showStatic(mine, false);
+    else layDeck();
+    window.scrollTo(0, 0);
+  }
+
+  $('shareBtn').addEventListener('click', share);
+  $('shareBtn2').addEventListener('click', share);
+  $('mineBtn').addEventListener('click', startOwn);
+  $('againBtn').addEventListener('click', function () {
+    S.storeSet(STORE_KEY, null);
+    S.setQuery('');
+    layDeck();
+    window.scrollTo(0, 0);
+    S.toast('새로 세 장을 골라 주세요');
+  });
+
+  var param = parseIds(new URLSearchParams(location.search).get('c'));
+  if (param) {
+    var mine = savedIds();
+    showStatic(param, !(mine && mine.join('-') === param.join('-')));
+  } else {
+    startOwn();
+  }
+})();
+</script>
+</body>
+</html>

@@ -73,9 +73,9 @@ for f in html_files:
         if href.endswith('/'): t = t / 'index.html'
         check(t.exists(), f'{rel}: 깨진 링크 {href}')
 check(len({v.split('?')[0] + v.split('?')[1] for v in versions}) == 2, f'assets 버전이 여러 개: {versions}')
-for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html']:
+for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'tarot/2027/index.html']:
     check('PartnersCoupang.G' in (ROOT / tp).read_text(encoding='utf-8'), f'{tp}: 쿠팡 배너 없음')
-for need in ['CNAME', 'ads.txt', 'robots.txt', 'sitemap.xml', 'favicon.svg', 'apple-touch-icon.png', 'share.png', 'share-bond.png', 'share-tarot.png']:
+for need in ['CNAME', 'ads.txt', 'robots.txt', 'sitemap.xml', 'favicon.svg', 'apple-touch-icon.png', 'share.png', 'share-bond.png', 'share-tarot.png', 'share-2027.png']:
     check((ROOT / need).exists(), f'파일 없음: {need}')
 check((ROOT / 'CNAME').read_text().strip() == 'pstlf.co.kr', 'CNAME 내용')
 for tp in ['index.html', 'past-life/index.html']:
@@ -92,10 +92,19 @@ for loc in re.findall(r'<loc>https://pstlf\.co\.kr(/[^<]*)</loc>', (ROOT / 'site
 check("kakaoKey: '9c80b443d515192669720d8220b878d5'" in (ROOT / 'assets/site.js').read_text(), '카카오 키')
 r = subprocess.run(['node', '-e', "new Function(require('fs').readFileSync(process.argv[1],'utf8'))", str(ROOT / 'assets/site.js')], capture_output=True)
 check(r.returncode == 0, 'site.js 문법 오류')
-for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'index.html']:
+for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'tarot/2027/index.html', 'index.html']:
     for i, js in enumerate(re.findall(r'<script>(.*?)</script>', (ROOT / tp).read_text(encoding='utf-8'), re.S)):
         r = subprocess.run(['node', '-e', 'new Function(process.argv[1])', js], capture_output=True, text=True)
         check(r.returncode == 0, f'{tp} 스크립트 {i} 문법 오류 {r.stderr[:200]}')
+
+ny_src = (ROOT / 'tarot/2027/index.html').read_text(encoding='utf-8')
+check(ny_src.count('window.NY_CARDS = [') == 1 and ny_src.count('window.NY_TEXT = [') == 1, '신년 타로: 카드 데이터가 채워지지 않음')
+check('<loc>https://pstlf.co.kr/tarot/2027/</loc>' in (ROOT / 'sitemap.xml').read_text(), 'sitemap: 신년 타로 없음')
+for f in sorted((ROOT / 'tarot/cards').glob('*/index.html')):
+    t = f.read_text(encoding='utf-8')
+    check('id="y2027"' in t and t.count('<dt>상반기</dt>') == 1 and 'href="/tarot/2027/"' in t, f'{f.parent.name}: 2027년 풀이 없음')
+for tp in ['index.html', 'past-life/index.html', 'bond/index.html', 'tarot/index.html']:
+    check('href="/tarot/2027/"' in (ROOT / tp).read_text(encoding='utf-8'), f'{tp}: 신년 타로 링크 없음')
 
 # ── B·C. 브라우저 점검 ─────────────────────────────
 srv = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '--bind', '127.0.0.1'], cwd=ROOT,
@@ -141,15 +150,15 @@ try:
                 pg.wait_for_timeout(150)
                 sw = pg.evaluate('document.documentElement.scrollWidth'); cw = pg.evaluate('document.documentElement.clientWidth')
                 check(sw <= cw + 1, f'[{tag}] {u}: 가로로 넘침 {sw}>{cw}')
-                if u == '/tarot/':
-                    widths = pg.evaluate("""() => { const d = document.getElementById('deck').getBoundingClientRect(); const span = {};
+                if u in ('/tarot/', '/tarot/2027/'):
+                    widths = pg.evaluate("""() => { document.getElementById('deck').scrollIntoView({block: 'center'}); const d = document.getElementById('deck').getBoundingClientRect(); const span = {};
                       for (let x = Math.max(0, d.left); x < Math.min(innerWidth, d.right); x += 2) for (let y = d.top; y < d.bottom; y += 4) {
                         const el = document.elementFromPoint(x, y); const c = el && el.closest('.tcard'); if (!c) continue;
                         const k = c.dataset.card; span[k] = span[k] || [1e9, -1e9]; span[k][0] = Math.min(span[k][0], x); span[k][1] = Math.max(span[k][1], x); }
                       return Object.values(span).map(s => Math.round(s[1] - s[0])); }""")
                     need = {'320': 26, '390': 36, 'pc': 40}[tag]
-                    check(len(widths) == 7 and min(widths) >= need, f'[{tag}] /tarot/: 카드별 누를 수 있는 폭 {sorted(widths)} (최소 {need}px)')
-                    notes.append(f'[{tag}] 타로 카드별 누를 수 있는 폭 {sorted(widths)}')
+                    check(len(widths) == 7 and min(widths) >= need, f'[{tag}] {u}: 카드별 누를 수 있는 폭 {sorted(widths)} (최소 {need}px)')
+                    notes.append(f'[{tag}] {u} 카드별 누를 수 있는 폭 {sorted(widths)}')
                 hd = pg.evaluate("(() => { const h = document.querySelector('.site-head'); return h ? h.getBoundingClientRect().height : 0 })()")
                 check(hd < 70, f'[{tag}] {u}: 상단 메뉴가 두 줄로 깨짐 ({hd:.0f}px)')
                 pg.close()
@@ -160,7 +169,8 @@ try:
 
         # 홈
         pg = open_page(ctx, '/', 'hub')
-        check(pg.locator('.test').count() == 3, 'hub: 테스트 3개')
+        check(pg.locator('.test').count() == 4, 'hub: 테스트 4개')
+        check(pg.locator('.test').first.get_attribute('href') == '/tarot/2027/', 'hub: 신년 타로가 맨 위')
         check(pg.locator('.read-list li').count() == 5, 'hub: 읽을거리 5개')
         check(pg.locator('.mirror-rim').is_visible(), 'hub: 거울 테두리')
         pg.goto(B + '/?n=%EA%B9%80%ED%95%98%EB%8A%98&s=1yv0xfq'); pg.wait_for_url('**/past-life/**'); wait_result(pg)
@@ -328,6 +338,78 @@ try:
             check(pg.locator('.tcard .tface svg *').count() > 0, f'tarot: {i}번 카드 그림')
         pg.close(); ctx5.close()
 
+        # 신년 타로
+        def ny_title(ids):
+            def ro(w):
+                c = ord(w[-1]); j = (c - 0xAC00) % 28
+                return '로' if j in (0, 8) else '으로'
+            return f'{words[ids[0]]}에서 {words[ids[1]]}{ro(words[ids[1]])} 가는 해'
+        ctx7 = make_ctx(b, 390, 844)
+        pg = open_page(ctx7, '/tarot/2027/', 'newyear')
+        words = pg.evaluate("window.NY_TEXT.map(t => t.word)")
+        check(len(words) == 22 and len(set(words)) == 22, f'newyear: 한 단어 22개가 서로 달라야 함 {len(set(words))}')
+        check(pg.locator('.tcard').count() == 7, 'newyear: 카드 7장 펼침')
+        ids = pg.evaluate("[...document.querySelectorAll('.tcard')].map(e=>Number(e.dataset.card))")
+        check(len(set(ids)) == 7, 'newyear: 겹치지 않는 7장')
+        check(pg.locator('.slot.is-next').count() == 1 and pg.locator('.slot').nth(0).evaluate("e => e.classList.contains('is-next')"), 'newyear: 첫 자리 안내')
+        check('상반기' in pg.inner_text('#hint'), f'newyear: 첫 안내 문구 {pg.inner_text("#hint")!r}')
+        picked = []
+        for k, nth in enumerate([6, 5, 4]):
+            picked.append(ids[nth]); pg.locator('.tcard').nth(nth).click(); pg.wait_for_timeout(120)
+            check(pg.locator('.slot.is-filled').count() == k + 1, f'newyear: {k + 1}번째 카드가 자리에 놓임')
+            if k < 2:
+                check(pg.locator('.slot').nth(k + 1).evaluate("e => e.classList.contains('is-next')"), f'newyear: {k + 2}번째 자리 안내')
+                check(pg.evaluate(f"document.querySelectorAll('.tcard')[{nth}].disabled"), 'newyear: 고른 카드는 다시 못 고름')
+        pg.wait_for_selector('#result:not([hidden])', timeout=5000); pg.wait_for_timeout(300)
+        check(pg.locator('.scard.is-flipped').count() == 3, 'newyear: 세 장 모두 뒤집힘')
+        check(pg.url.endswith('?c=' + '-'.join(map(str, picked))), f'newyear: 주소에 고른 순서 {pg.url}')
+        check(pg.inner_text('#rTitle').replace('\n', ' ') == ny_title(picked), f'newyear: 제목 {pg.inner_text("#rTitle")!r} 기대 {ny_title(picked)!r}')
+        check(pg.inner_text('#rWords') == ' · '.join(words[i] for i in picked), 'newyear: 키워드 세 개')
+        check(re.fullmatch(r'([1-9]|1[0-2])월', pg.inner_text('#rMonth')) is not None, f'newyear: 행운의 달 {pg.inner_text("#rMonth")!r}')
+        for k in range(3):
+            check(len(pg.inner_text(f'#rText{k}')) > 30 and pg.inner_text(f'#rCard{k}').endswith('카드'), f'newyear: {k}번째 풀이')
+        check(pg.locator('#rLinks a').count() == 3, 'newyear: 카드 뜻 링크 3개')
+        for href in pg.evaluate("[...document.querySelectorAll('#rLinks a')].map(a=>a.getAttribute('href'))"):
+            check((ROOT / href.lstrip('/') / 'index.html').exists(), f'newyear: 깨진 카드 링크 {href}')
+        visible_text_ok(pg, 'newyear 결과')
+        title_mine = pg.inner_text('#rTitle'); ny_url = pg.url
+        pg.click('#shareBtn'); pg.wait_for_timeout(300); pg.click('[data-kind=copy]'); pg.wait_for_timeout(400)
+        clip = pg.evaluate('navigator.clipboard.readText()')
+        check(ny_title(picked) in clip and '/tarot/2027/?c=' in clip, f'newyear: 복사하기 내용 {clip[:80]!r}')
+        pg.reload(); pg.wait_for_timeout(700)
+        check(pg.inner_text('#rTitle') == title_mine and not pg.is_visible('#sharedNote'), 'newyear: 새로고침해도 내 카드')
+        pg.goto(B + '/tarot/2027/'); pg.wait_for_timeout(700)
+        check(pg.locator('.tcard').count() == 0 and pg.inner_text('#rTitle') == title_mine, 'newyear: 다시 와도 같은 세 장')
+        pg.click('#againBtn'); pg.wait_for_timeout(300)
+        check(pg.locator('.tcard').count() == 7 and not pg.is_visible('#result') and '?' not in pg.url
+              and pg.locator('.slot.is-filled').count() == 0, 'newyear: 다른 사람도 뽑아 보기')
+        check(pg.evaluate("localStorage.getItem('pstlf-newyear-2027')") in (None, 'null'), 'newyear: 다시 뽑으면 저장 지움')
+        pg.close(); ctx7.close()
+        ctx8 = make_ctx(b, 390, 844)
+        pg = open_page(ctx8, ny_url.replace(B, ''), 'newyear shared'); pg.wait_for_timeout(700)
+        check(pg.is_visible('#sharedNote') and pg.inner_text('#rLead') == '친구의 2027년은' and pg.is_visible('#sharedActions'), 'newyear: 친구 화면')
+        check(pg.inner_text('#rTitle') == title_mine, 'newyear: 친구도 같은 결과')
+        pg.click('#mineBtn'); pg.wait_for_timeout(400)
+        check(pg.locator('.tcard').count() == 7, 'newyear: 친구가 나도 뽑기')
+        for bad in ['?c=1-1-2', '?c=1-2-99', '?c=abc', '?c=1-2', '?c=<b>1</b>']:
+            pg.goto(B + '/tarot/2027/' + bad); pg.wait_for_timeout(300)
+            check(pg.locator('.tcard').count() == 7 and not pg.is_visible('#result'), f'newyear: 잘못된 링크 {bad} 처리')
+        pg.close(); ctx8.close()
+        # 22장 모두 세 자리에 한 번씩, 좁은 화면에서 제목이 넘치지 않는지
+        ctx9 = make_ctx(b, 320, 640); pg = open_page(ctx9, '/tarot/2027/', 'newyear all')
+        longest = sorted(range(22), key=lambda i: -len(words[i]))
+        combos = [(i, (i + 7) % 22, (i + 15) % 22) for i in range(22)] + [(longest[0], longest[1], longest[2]), (longest[1], longest[0], longest[3])]
+        for ids3 in combos:
+            pg.goto(B + '/tarot/2027/?c=' + '-'.join(map(str, ids3))); pg.wait_for_selector('#result:not([hidden])', timeout=3000)
+            visible_text_ok(pg, f'newyear {ids3}')
+            check(pg.inner_text('#rTitle').replace('\n', ' ') == ny_title(ids3), f'newyear {ids3}: 제목')
+            check(pg.locator('.scard .tface svg *').count() >= 3, f'newyear {ids3}: 카드 그림')
+            over = pg.evaluate("(() => { const t = document.getElementById('rTitle'); return [...t.querySelectorAll('.nw')].some(s => s.getBoundingClientRect().right > t.getBoundingClientRect().right + 1); })()")
+            check(not over, f'newyear {ids3}: 320px에서 제목이 넘침')
+            sw = pg.evaluate('document.documentElement.scrollWidth'); check(sw <= 321, f'newyear {ids3}: 가로로 넘침 {sw}')
+        notes.append(f'신년 타로 조합 {len(combos)}가지 확인')
+        pg.close(); ctx9.close()
+
         # 카드 의미 페이지
         pg = open_page(ctx, '/tarot/cards/', 'cards')
         check(pg.locator('.card-grid a').count() == 22, 'cards: 22장 목록')
@@ -347,7 +429,7 @@ try:
 
         # 화면 사진
         ctx6 = make_ctx(b, 390, 844)
-        for u, name in [('/', 'hub'), ('/past-life/', 'past'), ('/bond/', 'bond'), ('/tarot/', 'tarot'), ('/about/', 'about'), ('/404.html', '404')]:
+        for u, name in [('/', 'hub'), ('/past-life/', 'past'), ('/bond/', 'bond'), ('/tarot/', 'tarot'), ('/tarot/2027/', 'newyear'), ('/about/', 'about'), ('/404.html', '404')]:
             pg = open_page(ctx6, u, name); pg.wait_for_timeout(500)
             pg.screenshot(path=str(OUT / f'{name}.png')); pg.close()
         ctx6.close()

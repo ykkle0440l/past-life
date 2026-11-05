@@ -5,6 +5,7 @@ python3 _build/build.py 로 실행하면
 - 세 테스트 페이지 아래 설명글(guide)을 채우고
 - 상단 메뉴와 아래 링크를 모든 페이지에 맞추고
 - 타로 카드 의미 22장, 읽을거리, 소개, 개인정보처리방침, 404, sitemap 을 만들어요.
+- 2027 신년 타로(tarot/2027/)에 카드 그림과 2027년 풀이(content_newyear.py)를 채워요.
 결과 데이터(전생, 인연, 카드)는 각 테스트 페이지의 스크립트에서 그대로 읽어 와요.
 (_build 폴더는 밑줄로 시작해서 GitHub Pages 에는 올라가지 않아요.)
 """
@@ -18,6 +19,7 @@ import subprocess
 
 from content_read import ARTICLES
 from content_tarot import CARD_EXTRA
+from content_newyear import NEWYEAR, YEAR, YEAR_NAME, YEAR_ANIMAL
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = 'https://pstlf.co.kr'
@@ -33,6 +35,16 @@ FOOT_LINKS = ('<p class="foot-links"><a href="/about/">소개</a><a href="/about
 
 def esc(s):
     return html.escape(s, quote=True)
+
+
+def has_batchim(word):
+    c = ord(word[-1])
+    return 0xAC00 <= c <= 0xD7A3 and (c - 0xAC00) % 28 != 0
+
+
+def ieyo(word):
+    """'희망이에요', '풍요예요'처럼 받침에 맞는 끝말"""
+    return '이에요' if has_batchim(word) else '예요'
 
 
 def read(rel):
@@ -86,9 +98,10 @@ def load_data():
     rays = re.search(r'function rays\(.*?\n  \}\n', tr, re.S).group(0)
     cards = node_json(rays + 'const CARDS = ' + extract_array(tr, 'CARDS') + ';',
                       "CARDS.map(c => Object.assign({}, c, {art: c.art + (c.artExtra ? c.artExtra() : '')}))")
-    assert len(cards) == len(CARD_EXTRA) == 22
-    for c, extra in zip(cards, CARD_EXTRA):
+    assert len(cards) == len(CARD_EXTRA) == len(NEWYEAR) == 22
+    for c, extra, ny in zip(cards, CARD_EXTRA, NEWYEAR):
         c.update(extra)
+        c['ny'] = ny
     return lives, animals, types, cards
 
 
@@ -249,6 +262,7 @@ def guide_tarot(cards):
       <h2 id="guideTitle">오늘의 타로는 이렇게 봐요</h2>
       <p>타로 78장 가운데 삶의 큰 흐름을 보여 주는 메이저 아르카나 22장으로 하루의 기운을 읽어요. 22장 가운데 7장을 섞어 펼쳐 두면, 그중 마음이 가는 카드 한 장을 고르면 돼요. 카드를 뒤집으면 키워드와 행운의 색, 행운의 시간, 그리고 오늘의 흐름과 사랑, 일과 돈에 관한 이야기가 나와요.</p>
       <p>카드는 하루에 한 장만 뽑을 수 있고, 자정이 지나면 새 카드를 뽑을 수 있어요. 뽑기 전에 숨을 한 번 고르고, ‘오늘 하루는 어떨까’처럼 짧은 질문을 마음속으로 떠올려 보세요. 같은 카드라도 어떤 질문을 품었는지에 따라 다르게 읽혀요.</p>
+      <p>하루가 아니라 한 해의 흐름이 궁금하다면 카드 세 장으로 상반기, 하반기, 올해의 열쇠를 보는 <a href="/tarot/{YEAR}/">{YEAR}년 신년 타로</a>도 뽑아 보세요.</p>
 
       <h2>메이저 아르카나 22장</h2>
       <p>카드를 누르면 그림 속 이야기와 자세한 뜻, 거꾸로 나왔을 때의 의미까지 볼 수 있어요.</p>
@@ -264,6 +278,66 @@ def guide_tarot(cards):
       <h2>더 읽어 보기</h2>
       {read_list([article('tarot-basics')])}
     </section>'''
+
+
+def guide_newyear(cards):
+    grid = ''.join(
+        f'<a href="/tarot/cards/{c["slug"]}/#y{YEAR}">{card_face(c, small=True)}<small>{esc(c["ny"]["word"])}</small></a>'
+        for c in cards)
+    questions = faq([
+        ('언제 뽑는 게 좋나요?',
+         '새해를 앞두고 미리 봐도 좋고, 1월 1일이나 설날처럼 마음을 새로 다잡는 날에 봐도 좋아요. 날짜보다 중요한 건 마음이에요. 조용한 곳에서 한 해를 떠올릴 수 있을 때 뽑아 보세요.'),
+        ('다시 뽑을 수 있나요?',
+         '뽑은 세 장은 지금 쓰는 기기에 저장돼서, 다시 들어와도 같은 카드가 보여요. 가족이나 친구와 한 휴대폰으로 함께 본다면 결과 아래의 ‘다른 사람도 뽑아 보기’를 눌러 새로 뽑을 수 있어요. 지금 결과를 남겨 두고 싶다면 먼저 공유하기로 링크를 저장해 두세요.'),
+        ('행운의 달은 어떻게 정해지나요?',
+         '뽑은 세 장의 조합에 따라 정해져요. 같은 세 장을 같은 순서로 뽑으면 언제나 같은 달이 나와요.'),
+        ('양띠 해는 언제부터인가요?',
+         f'보통은 음력 설날인 {YEAR}년 2월 7일부터 양띠 해로 봐요. 사주에서는 입춘인 {YEAR}년 2월 4일을 기준으로 해요.'),
+        ('입력한 정보가 저장되나요?',
+         '신년 타로는 이름이나 생년월일을 받지 않아요. 뽑은 카드 번호만 지금 쓰는 기기에 저장되고, 서버로 보내지 않아요.'),
+    ])
+    return f"""    <section class="guide" aria-labelledby="guideTitle">
+      <h2 id="guideTitle">{YEAR}년 신년 타로는 이렇게 봐요</h2>
+      <p>타로 78장 가운데 삶의 큰 흐름을 보여 주는 메이저 아르카나 22장으로 한 해를 읽어요. 22장 가운데 7장을 섞어 펼쳐 두면, 마음이 가는 카드를 세 장 차례로 고르면 돼요. 첫 번째 카드는 상반기, 두 번째 카드는 하반기, 세 번째 카드는 한 해 전체를 여는 열쇠 자리에 놓여요.</p>
+      <p>세 장을 모두 고르면 카드가 차례로 뒤집히고, 한 해를 한 줄로 담은 문장과 올해의 키워드, 행운의 색과 행운의 달, 그리고 자리마다의 풀이가 나와요. 뽑기 전에 숨을 한 번 고르고 ‘새해에는 어떤 일이 생길까’, ‘올해 꼭 이루고 싶은 것’처럼 새해에 품은 질문을 하나 떠올려 보세요.</p>
+
+      <h2>세 자리는 이렇게 읽어요</h2>
+      <ul>
+        <li><strong>상반기 (1~6월)</strong><br>새해를 여는 여섯 달의 분위기예요. 무엇을 시작하고 어디에 힘을 쓰면 좋은지 알려 줘요.</li>
+        <li><strong>하반기 (7~12월)</strong><br>상반기에 뿌린 것이 한 해의 후반에 어떻게 이어지는지 보여 줘요. 결과 맨 위의 한 줄은 상반기 카드에서 하반기 카드로 흘러가는 한 해를 담았어요.</li>
+        <li><strong>올해의 열쇠</strong><br>한 해 내내 품고 다닐 태도나 조언이에요. 행운의 색도 이 카드에서 나와요. 일이 잘 안 풀릴 때 이 자리의 풀이를 다시 꺼내 읽어 보세요.</li>
+      </ul>
+
+      <h2>{YEAR}년은 {YEAR_NAME}, {YEAR_ANIMAL}의 해</h2>
+      <p>{YEAR}년은 육십갑자로 {YEAR_NAME}(丁未年)이에요. 앞 글자 정(丁)은 오행에서 불에 속해 붉은색과 이어지고, 흔히 촛불이나 등불처럼 은은하게 오래 타는 불에 빗대요. 뒤 글자 미(未)는 열두 띠 가운데 양을 뜻해요. 그래서 {YEAR}년을 ‘{YEAR_ANIMAL}의 해’라고 불러요.</p>
+      <p>양은 무리를 지어 함께 지내는 온순한 동물이라, 예부터 화합과 평화, 따뜻한 마음을 떠올리게 하는 동물로 여겨져 왔어요. 크게 타오르기보다 곁을 오래 밝혀 주는 등불처럼, 서두르지 않고 주변과 함께 나아가는 한 해를 그려 보면 어떨까요.</p>
+      <p>띠가 바뀌는 날은 보통 음력 설날을 기준으로 봐요. 한국천문연구원 자료를 보면 {YEAR}년 설날은 양력 2월 7일이에요. 사주에서는 절기상 봄이 시작되는 입춘을 기준으로 보는데, {YEAR}년 입춘은 2월 4일이에요.</p>
+
+      <h2>카드별 {YEAR}년 한 단어</h2>
+      <p>카드마다 {YEAR}년에 담긴 한 단어예요. 카드를 누르면 상반기, 하반기, 올해의 열쇠 자리에 나왔을 때의 풀이를 볼 수 있어요.</p>
+      <div class="card-grid">{grid}</div>
+
+      <h2>자주 묻는 질문</h2>
+      {questions}
+
+      <h2>더 읽어 보기</h2>
+      {read_list([article('tarot-basics')])}
+    </section>"""
+
+
+def newyear_data(cards):
+    """신년 타로 페이지가 쓰는 카드 그림과 2027년 풀이"""
+    data = [dict(num=c['num'], ko=c['ko'], en=c['en'], slug=c['slug'], color=c['color'], art=c['art']) for c in cards]
+    text = [dict(word=c['ny']['word'], h1=c['ny']['h1'], h2=c['ny']['h2'], key=c['ny']['key']) for c in cards]
+    dump = lambda v: json.dumps(v, ensure_ascii=False).replace('</', '<\\/')
+    return f'window.NY_CARDS = {dump(data)};\nwindow.NY_TEXT = {dump(text)};'
+
+
+def inject_data(rel, js):
+    s = read(rel)
+    a = s.index('/* data:start */') + len('/* data:start */')
+    b = s.index('/* data:end */')
+    write(rel, s[:a] + '\n' + js + '\n' + s[b:])
 
 
 def inject_guide(rel, block):
@@ -365,6 +439,15 @@ def build_cards(cards):
     <blockquote>{esc(c["question"])}</blockquote>
     <p>{esc(c["ko"])} 카드가 건네는 한마디는 이거예요. {esc(c["advice"])}</p>
 
+    <h2 id="y{YEAR}">{YEAR}년 신년 타로에서 나왔다면</h2>
+    <p>{esc(c["ko"])} 카드가 담은 {YEAR}년의 한 단어는 ‘{esc(c["ny"]["word"])}’{ieyo(c["ny"]["word"])}. 신년 타로에서는 카드가 놓인 자리에 따라 이렇게 읽어요.</p>
+    <dl class="facts">
+      <dt>상반기</dt><dd>{esc(c["ny"]["h1"])}</dd>
+      <dt>하반기</dt><dd>{esc(c["ny"]["h2"])}</dd>
+      <dt>올해의 열쇠</dt><dd>{esc(c["ny"]["key"])}</dd>
+    </dl>
+    <p><a href="/tarot/{YEAR}/">{YEAR}년 신년 타로 세 장 뽑기</a></p>
+
     <div class="cta"><a class="btn btn-primary" href="/tarot/">오늘의 타로 한 장 뽑기</a></div>
     <nav class="pager" aria-label="다른 카드">
       <a href="/tarot/cards/{prev_c["slug"]}/">이전 카드: {esc(prev_c["ko"])}</a>
@@ -428,11 +511,11 @@ def build_about():
     <p>전생 거울이라는 이름은 옛이야기 속 업경대에서 빌려 왔어요. 업경대는 저승 재판정에 놓여 지나온 삶을 그대로 비춰 준다는 거울이에요. 전생 거울은 누군가를 심판하는 대신, 다른 시대의 나를 상상해 보는 즐거운 거울이 되고 싶어요. <a href="/read/mirror-of-karma/">업경대 이야기 읽기</a></p>
 
     <h2>만든 사람</h2>
-    <p>코딩을 따로 배운 적 없는 한 사람이 휴대폰 하나로, AI의 도움을 받아 가며 만들고 있어요. 2026년 11월에 첫 테스트인 전생 체험을 열었고, 이어서 전생의 인연 궁합과 오늘의 타로 한 장을 더했어요. 새로운 테스트와 읽을거리를 조금씩 늘려 갈 예정이에요.</p>
+    <p>코딩을 따로 배운 적 없는 한 사람이 휴대폰 하나로, AI의 도움을 받아 가며 만들고 있어요. 2026년 11월에 첫 테스트인 전생 체험을 열었고, 이어서 전생의 인연 궁합과 오늘의 타로 한 장, 2027년 신년 타로를 더했어요. 새로운 테스트와 읽을거리를 조금씩 늘려 갈 예정이에요.</p>
 
     <h2>결과는 이렇게 만들어져요</h2>
     <p>전생 체험과 인연 궁합은 입력한 이름과 생년월일을 하나의 숫자로 바꾼 뒤, 그 숫자에 맞는 이야기를 미리 써 둔 이야기들 가운데서 골라 보여 줘요. 그래서 같은 정보를 넣으면 언제나 같은 결과가 나와요. 결과에 나오는 시대와 직업은 실제 역사 속 장소와 직업을 바탕으로 직접 썼어요.</p>
-    <p>오늘의 타로 한 장은 메이저 아르카나 22장 가운데 한 장을 고르는 방식이에요. 카드마다 오늘의 흐름과 사랑, 일과 돈, 한마디를 따로 정리했고, 카드별 자세한 뜻은 <a href="/tarot/cards/">카드 의미</a>에서 볼 수 있어요.</p>
+    <p>오늘의 타로 한 장은 메이저 아르카나 22장 가운데 한 장을, 신년 타로는 세 장을 고르는 방식이에요. 카드마다 오늘의 흐름과 사랑, 일과 돈, 한마디, 그리고 2027년 풀이를 따로 정리했고, 카드별 자세한 뜻은 <a href="/tarot/cards/">카드 의미</a>에서 볼 수 있어요.</p>
 
     <h2>이용할 때 알아 두세요</h2>
     <p>모든 결과는 재미로 즐기기 위한 것이에요. 건강, 돈, 진로처럼 중요한 결정은 결과에 기대기보다 충분히 알아보고 전문가와 상의해 주세요. 입력한 이름과 생년월일은 서버로 보내거나 저장하지 않아요. 자세한 내용은 <a href="/privacy.html">개인정보처리방침</a>에서 볼 수 있어요.</p>
@@ -446,16 +529,16 @@ def build_about():
 
 def build_privacy():
     main = '''    <h1>개인정보처리방침</h1>
-    <p class="summary">시행일: 2026년 11월 1일 (2026년 11월 2일 고침)</p>
+    <p class="summary">시행일: 2026년 11월 1일 (2026년 11월 5일 고침)</p>
 
     <h2>입력한 정보</h2>
     <p>전생 거울은 이름과 생년월일을 입력받아 결과를 보여 줍니다. 이 정보는 이용자의 기기(브라우저) 안에서만 계산에 쓰이며, 서버로 보내거나 저장하지 않습니다.</p>
 
     <h2>기기에 저장되는 정보</h2>
-    <p>오늘의 타로는 하루에 한 장만 뽑을 수 있도록, 뽑은 카드 번호와 날짜를 이용자 기기의 브라우저에 저장합니다. 이 정보는 서버로 보내지 않으며, 브라우저의 사이트 데이터를 지우면 함께 삭제됩니다.</p>
+    <p>오늘의 타로는 하루에 한 장만 뽑을 수 있도록, 신년 타로는 뽑은 세 장을 다시 보여 드리기 위해, 뽑은 카드 번호와 날짜를 이용자 기기의 브라우저에 저장합니다. 이 정보는 서버로 보내지 않으며, 브라우저의 사이트 데이터를 지우면 함께 삭제됩니다.</p>
 
     <h2>결과 공유</h2>
-    <p>결과를 공유하면 링크에 이름(인연 궁합은 두 사람의 이름)과 결과 번호가 들어갑니다. 생년월일은 링크에 들어가지 않습니다. 링크를 받은 사람은 링크에 담긴 이름을 볼 수 있으니, 공유 전에 참고해 주세요.</p>
+    <p>결과를 공유하면 링크에 이름(인연 궁합은 두 사람의 이름)과 결과 번호가 들어갑니다. 타로와 신년 타로는 카드 번호만 들어갑니다. 생년월일은 링크에 들어가지 않습니다. 링크를 받은 사람은 링크에 담긴 이름을 볼 수 있으니, 공유 전에 참고해 주세요.</p>
     <p>공유 창에서 카카오톡, X, 스레드, 페이스북, 메시지를 고르면 해당 서비스나 앱으로 이동하며, 그 이후에는 각 서비스의 개인정보처리방침이 적용됩니다.</p>
 
     <h2>광고와 쿠키</h2>
@@ -494,7 +577,7 @@ def build_hub():
 
 
 def build_sitemap(cards):
-    paths = ['/', '/past-life/', '/bond/', '/tarot/', '/tarot/cards/']
+    paths = ['/', '/past-life/', '/bond/', '/tarot/', f'/tarot/{YEAR}/', '/tarot/cards/']
     paths += [f'/tarot/cards/{c["slug"]}/' for c in cards]
     paths += ['/read/'] + [f'/read/{a["slug"]}/' for a in ARTICLES]
     paths += ['/about/', '/privacy.html']
@@ -528,7 +611,10 @@ def main():
     inject_guide('past-life/index.html', guide_pastlife(lives, animals))
     inject_guide('bond/index.html', guide_bond(types))
     inject_guide('tarot/index.html', guide_tarot(cards))
-    for rel in ['past-life/index.html', 'bond/index.html', 'tarot/index.html']:
+    ny_rel = f'tarot/{YEAR}/index.html'
+    inject_guide(ny_rel, guide_newyear(cards))
+    inject_data(ny_rel, newyear_data(cards))
+    for rel in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', ny_rel]:
         fix_chrome(rel, '/')
     build_hub()
     fix_mirror('past-life/index.html', main=True)
@@ -542,7 +628,7 @@ def main():
     versions, pages = stamp_assets()
     print('assets', versions, 'pages', pages)
     print(f'ok: lives={sum(len(l["roles"]) for l in lives)} animals={len(animals)} bonds={len(types)} cards={len(cards)} '
-          f'articles={len(ARTICLES)} sitemap={n}')
+          f'articles={len(ARTICLES)} newyear={len(NEWYEAR)} sitemap={n}')
 
 
 if __name__ == '__main__':
