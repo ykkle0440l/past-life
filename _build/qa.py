@@ -63,7 +63,7 @@ for f in html_files:
     for m in re.findall(r'/assets/site\.(?:css|js)\?v=[0-9a-f]+', s): versions.add(m)
     check(not re.search(r'/assets/site\.(css|js)"', s), f'{rel}: 버전 없는 assets 주소')
     has_ads = 'ca-pub-8262915217195031' in s
-    if rel in ('privacy.html', '404.html'):
+    if rel in ('privacy.html', '404.html', 'shop/index.html'):
         check(not has_ads, f'{rel}: 광고 코드가 있으면 안 됨')
     else:
         check(has_ads, f'{rel}: 애드센스 코드 없음')
@@ -95,10 +95,34 @@ for loc in re.findall(r'<loc>https://pstlf\.co\.kr(/[^<]*)</loc>', (ROOT / 'site
 check("kakaoKey: '9c80b443d515192669720d8220b878d5'" in (ROOT / 'assets/site.js').read_text(), '카카오 키')
 r = subprocess.run(['node', '-e', "new Function(require('fs').readFileSync(process.argv[1],'utf8'))", str(ROOT / 'assets/site.js')], capture_output=True)
 check(r.returncode == 0, 'site.js 문법 오류')
-for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'tarot/2027/index.html', 'index.html']:
+for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'tarot/2027/index.html', 'index.html', 'shop/index.html']:
     for i, js in enumerate(re.findall(r'<script>(.*?)</script>', (ROOT / tp).read_text(encoding='utf-8'), re.S)):
         r = subprocess.run(['node', '-e', 'new Function(process.argv[1])', js], capture_output=True, text=True)
         check(r.returncode == 0, f'{tp} 스크립트 {i} 문법 오류 {r.stderr[:200]}')
+
+# 상품 모음(/shop/): 검색 제외, 대가성 문구가 맨 위, 상품 목록 파일 형식
+SHOP_NOTICE = '이 페이지는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.'
+shop_src = (ROOT / 'shop/index.html').read_text(encoding='utf-8')
+check('<meta name="robots" content="noindex">' in shop_src, 'shop: noindex 없음')
+check('/shop/' not in (ROOT / 'sitemap.xml').read_text(), 'shop: sitemap에 들어가면 안 됨')
+check(not any('href="/shop/"' in f.read_text(encoding='utf-8') for f in html_files if f.parent.name != 'shop'), 'shop: 다른 페이지 메뉴에 링크가 생김')
+main_html = shop_src.split('<main class="prose">', 1)[1].lstrip()
+check(main_html.startswith(f'<p class="shop-notice" role="note">{SHOP_NOTICE}</p>'), 'shop: 대가성 문구가 본문 맨 위에 없음')
+shop_nums = {}
+for i, line in enumerate((ROOT / 'shop/items.txt').read_text(encoding='utf-8').splitlines(), 1):
+    line = line.strip()
+    if not line or line.startswith('#'):
+        continue
+    f = [x.strip() for x in line.split('|')]
+    m = re.fullmatch(r'(\d{1,6})\s*번?', f[0])
+    ok = bool(m) and int(m.group(1)) > 0 and len(f) >= 3 and f[1] and re.fullmatch(r'https://[^\s"\'<>\\]+', f[2])
+    if check(ok, f'shop/items.txt {i}번째 줄 형식 오류 (번호 | 상품명 | https 링크): {line[:60]}'):
+        n = int(m.group(1))
+        check(n not in shop_nums, f'shop/items.txt {i}번째 줄: {n}번이 {shop_nums.get(n)}번째 줄과 겹침')
+        shop_nums[n] = i
+        if len(f) >= 6 and f[5]:
+            check(re.fullmatch(r'https://[^\s"\'<>\\]+', f[5]), f'shop/items.txt {i}번째 줄: 사진 주소는 https:// 로 시작해야 함')
+notes.append(f'상품 모음 상품 {len(shop_nums)}개')
 
 ny_src = (ROOT / 'tarot/2027/index.html').read_text(encoding='utf-8')
 check(ny_src.count('window.NY_CARDS = [') == 1 and ny_src.count('window.NY_TEXT = [') == 1, '신년 타로: 카드 데이터가 채워지지 않음')
@@ -550,6 +574,76 @@ try:
             check(pg.evaluate(started) and not pg.is_visible('#sharedNote'), f'공유 {path}: 맨 위 버튼을 누르면 내 테스트 시작')
             pg.close(); c4.close()
             notes.append(f'공유 {path}: {text}  →  {url.replace(B, SITE)}')
+
+        # 상품 모음: 실제 목록 대신 시험용 목록으로 검색·링크·이상한 줄 처리를 확인
+        SAMPLE = '\n'.join([
+            '# 주석 줄은 안 나와요',
+            '3 | 접이식 실리콘 냄비 | https://link.coupang.com/a/aaa | 접으면 손바닥만 해져요 | 캠핑',
+            '12번 | 무선 미니 청소기 | https://link.coupang.com/a/bbb | | 청소 | https://example.com/x.jpg',
+            '7 | <img src=x onerror="window.__xss=1"> 이름 | https://link.coupang.com/a/ccc | 소개 <b>굵게</b>',
+            '8 | 나쁜 링크 | javascript:alert(1) | 안 나와야 해요',
+            '9 | 링크 없음',
+            'abc | 번호가 이상함 | https://link.coupang.com/a/ddd',
+            '0 | 0번은 안 나와요 | https://link.coupang.com/a/eee',
+            '20 | 아주아주아주아주아주아주아주아주아주아주아주아주긴상품이름도화면을넘지않아야해요 | https://link.coupang.com/a/fff | 소개',
+            '3 | 같은 번호면 뒤에 쓴 줄 | https://link.coupang.com/a/ggg',
+        ])
+        def shop_ctx(w=390, h=844, body=SAMPLE, status=200):
+            c = make_ctx(b, w, h, w < 1000)
+            c.route('**/shop/items.txt', lambda r: r.fulfill(status=status, body=body, content_type='text/plain; charset=utf-8'))
+            c.route('https://example.com/**', lambda r: r.abort())
+            return c
+        def shop_open(c, q=''):
+            pg = open_page(c, '/shop/' + q, 'shop' + q)
+            pg.wait_for_function("!/불러오는 중/.test(document.getElementById('shopStatus').textContent)", timeout=4000)
+            return pg
+        def shop_nums_on(pg):
+            return pg.evaluate("[...document.querySelectorAll('.shop-item')].map(e => +e.id.slice(5))")
+        c = shop_ctx(); pg = shop_open(c)
+        check(shop_nums_on(pg) == [20, 12, 7, 3], f'shop: 목록 {shop_nums_on(pg)}')
+        check(pg.inner_text('#shopStatus').startswith('상품 4개'), f'shop: 개수 안내 {pg.inner_text("#shopStatus")!r}')
+        check(not pg.evaluate('window.__xss') and pg.locator('.shop-item img').count() <= 1, 'shop: 상품 이름 속 태그가 실행됨')
+        check('<img src=x' in pg.inner_text('#item-7') and '<b>굵게</b>' in pg.inner_text('#item-7'), 'shop: 태그 글자를 그대로 보여 주지 않음')
+        links = pg.evaluate("[...document.querySelectorAll('.shop-link')].map(a => [a.href, a.target, a.rel])")
+        check(all(h.startswith('https://link.coupang.com/') and t == '_blank' and r == 'sponsored nofollow noopener' for h, t, r in links), f'shop: 링크 속성 {links}')
+        check(pg.get_attribute('#item-3 .shop-link', 'href') == 'https://link.coupang.com/a/ggg', 'shop: 같은 번호는 뒤에 쓴 줄')
+        check(pg.locator('#item-12 .shop-cat').inner_text() == '청소' and pg.locator('#item-12 .shop-body small').count() == 0, 'shop: 빈 소개 칸 처리')
+        pg.wait_for_timeout(300)
+        check(pg.locator('#item-12 img').count() == 0 and 'has-img' not in pg.get_attribute('#item-12 .shop-media', 'class'), 'shop: 못 불러온 사진은 숨김')
+        notice = pg.locator('.shop-notice').bounding_box(); h1 = pg.locator('h1').bounding_box()
+        check(notice['y'] < h1['y'] and notice['y'] + notice['height'] < 844, 'shop: 대가성 문구가 첫 화면 맨 위에 안 보임')
+        visible_text_ok(pg, 'shop')
+        pg.fill('#shopNum', ''); pg.type('#shopNum', '12')
+        check(shop_nums_on(pg) == [12] and pg.inner_text('#shopStatus') == '12번 상품이에요.' and pg.is_visible('#shopAll'), 'shop: 번호 입력하면 바로 찾기')
+        check(pg.url.endswith('/shop/?n=12'), f'shop: 찾은 번호가 주소에 담김 {pg.url}')
+        pg.fill('#shopNum', ''); pg.type('#shopNum', '12번'); check(pg.input_value('#shopNum') == '12', 'shop: 숫자만 남김')
+        pg.fill('#shopNum', '0012'); pg.click('.shop-search button'); pg.wait_for_timeout(100)
+        check(shop_nums_on(pg) == [12], 'shop: 0012도 12번')
+        pg.fill('#shopNum', '99'); pg.click('.shop-search button'); pg.wait_for_timeout(100)
+        check(shop_nums_on(pg) == [] and '99번 상품을 찾지 못했어요' in pg.inner_text('#shopStatus'), 'shop: 없는 번호 안내')
+        pg.click('#shopAll'); pg.wait_for_timeout(100)
+        check(shop_nums_on(pg) == [20, 12, 7, 3] and pg.input_value('#shopNum') == '' and pg.url.endswith('/shop/') and not pg.is_visible('#shopAll'), 'shop: 전체 상품 보기')
+        pg.close()
+        pg = shop_open(c, '?n=7')
+        check(shop_nums_on(pg) == [7] and pg.input_value('#shopNum') == '7' and pg.locator('.is-hit').count() == 1, 'shop: ?n=7 주소로 열기')
+        pg.screenshot(path=str(OUT / 'shop-find.png')); pg.close()
+        pg = shop_open(c); pg.screenshot(path=str(OUT / 'shop.png'), full_page=True); pg.close(); c.close()
+        c = shop_ctx(320, 640); pg = shop_open(c)
+        check(pg.evaluate('document.documentElement.scrollWidth') <= 321, 'shop: 320px 가로로 넘침')
+        btn = pg.locator('.shop-search button').bounding_box()
+        check(btn['x'] + btn['width'] <= 320 - 19, f'shop: 320px 찾기 버튼 위치 {btn}')
+        pg.screenshot(path=str(OUT / 'shop-320.png')); pg.close(); c.close()
+        c = shop_ctx(body=(ROOT / 'shop/items.txt').read_text(encoding='utf-8')); pg = shop_open(c)
+        n_real = len(shop_nums)
+        check(len(shop_nums_on(pg)) == n_real, f'shop: 실제 목록 {len(shop_nums_on(pg))}개 (파일 {n_real}개)')
+        if n_real == 0:
+            check('아직 올라온 상품이 없어요' in pg.inner_text('#shopStatus'), 'shop: 빈 목록 안내')
+        pg.close(); c.close()
+        c = shop_ctx(status=404); pg = shop_open(c)
+        check('불러오지 못했어요' in pg.inner_text('#shopStatus'), 'shop: 목록을 못 불러올 때 안내')
+        page_errors[:] = [e for e in page_errors if not ('shop' in e and '404' in e)]
+        pg.close(); c.close()
+        notes.append('상품 모음 검색·링크·이상한 줄 처리 확인')
 
         # 화면 사진
         ctx6 = make_ctx(b, 390, 844)

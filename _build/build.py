@@ -6,6 +6,7 @@ python3 _build/build.py 로 실행하면
 - 상단 메뉴와 아래 링크를 모든 페이지에 맞추고
 - 타로 카드 의미 22장, 읽을거리, 소개, 개인정보처리방침, 404, sitemap 을 만들어요.
 - 2027 신년 타로(tarot/2027/)에 카드 그림과 2027년 풀이(content_newyear.py)를 채워요.
+- 숏폼 영상 속 상품 모음(shop/)을 만들어요. 상품 목록은 shop/items.txt 에서 고쳐요.
 결과 데이터(전생, 인연, 카드)는 각 테스트 페이지의 스크립트에서 그대로 읽어 와요.
 (_build 폴더는 밑줄로 시작해서 GitHub Pages 에는 올라가지 않아요.)
 """
@@ -576,6 +577,214 @@ def build_hub():
     fix_chrome(rel, '/')
 
 
+SHOP_NOTICE = '이 페이지는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.'
+
+SHOP_ITEMS_TEMPLATE = '''# 영상 속 상품 목록 (https://pstlf.co.kr/shop/ 에 나와요)
+#
+# 한 줄에 상품 하나씩 쓰고, 칸은 | 로 나눠요.
+#   번호 | 상품명 | 쿠팡 파트너스 링크 | 한 줄 소개 | 분야 | 상품 사진 주소
+#
+# - 번호: 영상에서 "프로필 링크에서 ○번" 이라고 안내할 숫자예요. 같은 번호는 한 번만 써요.
+# - 쿠팡 파트너스 링크: https:// 로 시작하는 링크만 나와요.
+# - 한 줄 소개, 분야, 상품 사진 주소는 비워 둬도 돼요.
+# - 맨 앞에 # 이 있는 줄은 사이트에 나오지 않아요.
+#
+# 예시 (맨 앞 # 을 지우면 사이트에 나와요)
+# 1 | 접이식 실리콘 냄비 | https://link.coupang.com/a/xxxxxx | 접으면 손바닥만 해지는 캠핑 냄비 | 캠핑
+'''
+
+SHOP_STYLE = '''<style>
+.shop-notice { margin: 0 0 22px; padding: 10px 14px; border: 1px solid rgba(200,164,94,.45); border-radius: 10px;
+  background: rgba(200,164,94,.08); color: #F4EFE3; font-size: .88rem; line-height: 1.6; }
+.shop-search { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+.shop-search .field { margin: 0; }
+.shop-search .btn { width: auto; min-width: 84px; height: 54px; }
+.shop-status { color: var(--moon-dim); font-size: .92rem; margin: 14px 0 10px; min-height: 1.6em; }
+.shop-status:empty { display: none; }
+.prose .shop-all { width: auto; min-height: 44px; padding: 0; margin: -4px 0 8px; color: var(--brass);
+  text-decoration: underline; text-underline-offset: 4px; }
+.shop-list { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 10px; }
+.shop-list li { margin: 0; }
+.prose .shop-link { display: grid; grid-template-columns: 64px 1fr; gap: 6px 14px; align-items: center; padding: 14px;
+  border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(233,228,216,.14);
+  color: var(--moon); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.prose .shop-link:active { background: rgba(255,255,255,.08); }
+.shop-item.is-hit .shop-link { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(200,164,94,.18); }
+.shop-media { position: relative; width: 64px; height: 64px; border-radius: 10px; overflow: hidden;
+  display: grid; place-items: center; background: rgba(200,164,94,.12); border: 1px solid rgba(200,164,94,.4); }
+.shop-media img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.shop-num { font-family: var(--display); color: var(--brass); font-size: 1.5rem; line-height: 1; }
+.shop-num small { font-size: .78rem; margin-left: 1px; }
+.shop-media.has-img .shop-num { position: absolute; left: 0; top: 0; padding: 3px 6px; font-size: .82rem;
+  color: #1E1A12; background: var(--brass); border-bottom-right-radius: 8px; }
+.shop-media.has-img .shop-num small { font-size: .7rem; }
+.shop-body { min-width: 0; }
+.shop-body strong { display: block; color: #F4EFE3; font-weight: 400; font-size: 1.04rem; line-height: 1.45; overflow-wrap: anywhere; }
+.shop-body small { display: block; color: var(--moon-dim); font-size: .88rem; line-height: 1.55; margin-top: 3px; }
+.shop-cat { display: inline-block; margin-top: 6px; padding: 1px 8px; border-radius: 999px; font-size: .76rem;
+  color: var(--brass); border: 1px solid rgba(200,164,94,.4); }
+.shop-go { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; min-height: 44px;
+  margin-top: 6px; border-radius: 8px; background: var(--brass); color: #1E1A12; font-size: .98rem; }
+</style>'''
+
+SHOP_SCRIPT = r'''<script>
+(function () {
+  'use strict';
+  var list = document.getElementById('shopList');
+  var statusEl = document.getElementById('shopStatus');
+  var form = document.getElementById('shopSearch');
+  var input = document.getElementById('shopNum');
+  var allBtn = document.getElementById('shopAll');
+  var items = [];
+  var ready = false;
+  var LINK = /^https:\/\/[^\s"'<>\\]+$/i;
+
+  function parse(text) {
+    var byNum = {};
+    text.split(/\r?\n/).forEach(function (line) {
+      line = line.trim();
+      if (!line || line.charAt(0) === '#') return;
+      var f = line.split('|').map(function (s) { return s.trim(); });
+      var m = /^(\d{1,6})\s*번?$/.exec(f[0] || '');
+      var num = m ? parseInt(m[1], 10) : 0;
+      var name = f[1] || '', url = f[2] || '', img = f[5] || '';
+      if (!num || !name || !LINK.test(url)) return;
+      byNum[num] = { num: num, name: name, url: url, desc: f[3] || '', cat: f[4] || '', img: LINK.test(img) ? img : '' };
+    });
+    return Object.keys(byNum).map(function (k) { return byNum[k]; }).sort(function (a, b) { return b.num - a.num; });
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text) e.textContent = text;
+    return e;
+  }
+
+  function card(it, hit) {
+    var li = el('li', 'shop-item' + (hit ? ' is-hit' : ''));
+    li.id = 'item-' + it.num;
+    var a = el('a', 'shop-link');
+    a.href = it.url;
+    a.target = '_blank';
+    a.rel = 'sponsored nofollow noopener';
+    a.setAttribute('aria-label', it.num + '번 ' + it.name + ', 쿠팡에서 보기 (새 창)');
+    var media = el('span', 'shop-media');
+    var num = el('span', 'shop-num', String(it.num));
+    num.appendChild(el('small', '', '번'));
+    if (it.img) {
+      var img = document.createElement('img');
+      img.src = it.img;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
+      img.onerror = function () { img.remove(); media.className = 'shop-media'; };
+      media.className = 'shop-media has-img';
+      media.appendChild(img);
+    }
+    media.appendChild(num);
+    var body = el('span', 'shop-body');
+    body.appendChild(el('strong', '', it.name));
+    if (it.desc) body.appendChild(el('small', '', it.desc));
+    if (it.cat) body.appendChild(el('span', 'shop-cat', it.cat));
+    a.appendChild(media);
+    a.appendChild(body);
+    a.appendChild(el('span', 'shop-go', '쿠팡에서 보기 ›'));
+    li.appendChild(a);
+    return li;
+  }
+
+  function render(arr, hit) {
+    list.textContent = '';
+    arr.forEach(function (it) { list.appendChild(card(it, hit)); });
+  }
+
+  function setUrl(n) {
+    try { history.replaceState(null, '', location.pathname + (n ? '?n=' + n : '')); } catch (e) {}
+  }
+
+  function show(q) {
+    if (!ready) return;
+    var digits = String(q || '').replace(/[^0-9]/g, '').slice(0, 6);
+    var n = digits ? parseInt(digits, 10) : 0;
+    if (!n) {
+      render(items, false);
+      statusEl.textContent = items.length ? '상품 ' + items.length + '개가 있어요. 최근에 올라온 순서예요.'
+        : '아직 올라온 상품이 없어요. 영상이 올라오면 여기에 하나씩 채워져요.';
+      allBtn.hidden = true;
+      setUrl('');
+      return;
+    }
+    var hit = items.filter(function (it) { return it.num === n; });
+    render(hit, true);
+    statusEl.textContent = hit.length ? n + '번 상품이에요.' : n + '번 상품을 찾지 못했어요. 영상 속 번호를 다시 확인해 주세요.';
+    allBtn.hidden = !items.length;
+    setUrl(String(n));
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    show(input.value);
+    input.blur();
+  });
+  input.addEventListener('input', function () {
+    var v = input.value.replace(/[^0-9]/g, '').slice(0, 6);
+    if (v !== input.value) input.value = v;
+    show(v);
+  });
+  allBtn.addEventListener('click', function () {
+    input.value = '';
+    show('');
+    input.focus();
+  });
+
+  var start = new URLSearchParams(location.search).get('n') || '';
+  statusEl.textContent = '상품 목록을 불러오는 중이에요.';
+  fetch('/shop/items.txt', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (text) {
+      items = parse(text);
+      ready = true;
+      input.value = start.replace(/[^0-9]/g, '').slice(0, 6);
+      show(input.value);
+    })
+    .catch(function () {
+      statusEl.textContent = '상품 목록을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.';
+    });
+})();
+</script>'''
+
+
+def build_shop():
+    """숏폼 영상 속 상품 모음 (/shop/). 상품은 shop/items.txt 한 파일만 고치면 돼요.
+    검색에 나올 필요가 없는 링크 페이지라 noindex, 사이트맵·메뉴에서 빠지고, 애드센스도 넣지 않아요."""
+    if not (ROOT / 'shop/items.txt').exists():
+        write('shop/items.txt', SHOP_ITEMS_TEMPLATE)
+    main = f'''    <p class="shop-notice" role="note">{SHOP_NOTICE}</p>
+    <h1>영상 속 상품 모음</h1>
+    <p class="summary">숏폼 영상에 나온 상품을 번호로 찾아보세요. 상품을 누르면 쿠팡 상품 페이지가 새 창으로 열려요.</p>
+
+    <form class="shop-search" id="shopSearch" role="search" novalidate>
+      <div class="field">
+        <label for="shopNum">영상에서 본 상품 번호</label>
+        <input id="shopNum" name="n" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="예: 12">
+      </div>
+      <button class="btn btn-primary" type="submit">찾기</button>
+    </form>
+    <p class="shop-status" id="shopStatus" aria-live="polite"></p>
+    <button class="btn btn-text shop-all" id="shopAll" type="button" hidden>‹ 전체 상품 보기</button>
+    <ol class="shop-list" id="shopList"></ol>
+    <noscript><p>상품 목록을 보려면 브라우저의 자바스크립트를 켜 주세요.</p></noscript>
+{SHOP_SCRIPT}'''
+    s = page('/shop/', '영상 속 상품 모음', '숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.', main,
+             kind='website', ads=False, note='가격과 재고는 쿠팡에서 바뀔 수 있어요. 구매 전에 상품 페이지에서 꼭 확인해 주세요.')
+    s = s.replace('<link rel="canonical" href="https://pstlf.co.kr/shop/">',
+                  '<link rel="canonical" href="https://pstlf.co.kr/shop/">\n<meta name="robots" content="noindex">', 1)
+    s = s.replace('</head>', SHOP_STYLE + '\n</head>', 1)
+    write('shop/index.html', s)
+
+
 def build_sitemap(cards):
     paths = ['/', '/past-life/', '/bond/', '/tarot/', f'/tarot/{YEAR}/', '/tarot/cards/']
     paths += [f'/tarot/cards/{c["slug"]}/' for c in cards]
@@ -624,6 +833,7 @@ def main():
     build_about()
     build_privacy()
     build_404()
+    build_shop()
     n = build_sitemap(cards)
     versions, pages = stamp_assets()
     print('assets', versions, 'pages', pages)

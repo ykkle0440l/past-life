@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>영상 속 상품 모음 | 전생 거울</title>
+<meta name="description" content="숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.">
+<meta name="theme-color" content="#18203A">
+<link rel="canonical" href="https://pstlf.co.kr/shop/">
+<meta name="robots" content="noindex">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="전생 거울">
+<meta property="og:title" content="영상 속 상품 모음">
+<meta property="og:description" content="숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.">
+<meta property="og:url" content="https://pstlf.co.kr/shop/">
+<meta property="og:image" content="https://pstlf.co.kr/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=ac7b0e5728">
+
+<style>
+.shop-notice { margin: 0 0 22px; padding: 10px 14px; border: 1px solid rgba(200,164,94,.45); border-radius: 10px;
+  background: rgba(200,164,94,.08); color: #F4EFE3; font-size: .88rem; line-height: 1.6; }
+.shop-search { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+.shop-search .field { margin: 0; }
+.shop-search .btn { width: auto; min-width: 84px; height: 54px; }
+.shop-status { color: var(--moon-dim); font-size: .92rem; margin: 14px 0 10px; min-height: 1.6em; }
+.shop-status:empty { display: none; }
+.prose .shop-all { width: auto; min-height: 44px; padding: 0; margin: -4px 0 8px; color: var(--brass);
+  text-decoration: underline; text-underline-offset: 4px; }
+.shop-list { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 10px; }
+.shop-list li { margin: 0; }
+.prose .shop-link { display: grid; grid-template-columns: 64px 1fr; gap: 6px 14px; align-items: center; padding: 14px;
+  border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(233,228,216,.14);
+  color: var(--moon); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.prose .shop-link:active { background: rgba(255,255,255,.08); }
+.shop-item.is-hit .shop-link { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(200,164,94,.18); }
+.shop-media { position: relative; width: 64px; height: 64px; border-radius: 10px; overflow: hidden;
+  display: grid; place-items: center; background: rgba(200,164,94,.12); border: 1px solid rgba(200,164,94,.4); }
+.shop-media img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.shop-num { font-family: var(--display); color: var(--brass); font-size: 1.5rem; line-height: 1; }
+.shop-num small { font-size: .78rem; margin-left: 1px; }
+.shop-media.has-img .shop-num { position: absolute; left: 0; top: 0; padding: 3px 6px; font-size: .82rem;
+  color: #1E1A12; background: var(--brass); border-bottom-right-radius: 8px; }
+.shop-media.has-img .shop-num small { font-size: .7rem; }
+.shop-body { min-width: 0; }
+.shop-body strong { display: block; color: #F4EFE3; font-weight: 400; font-size: 1.04rem; line-height: 1.45; overflow-wrap: anywhere; }
+.shop-body small { display: block; color: var(--moon-dim); font-size: .88rem; line-height: 1.55; margin-top: 3px; }
+.shop-cat { display: inline-block; margin-top: 6px; padding: 1px 8px; border-radius: 999px; font-size: .76rem;
+  color: var(--brass); border: 1px solid rgba(200,164,94,.4); }
+.shop-go { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; min-height: 44px;
+  margin-top: 6px; border-radius: 8px; background: var(--brass); color: #1E1A12; font-size: .98rem; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="site-head">
+    <a class="wordmark" href="/">전생 거울</a>
+    <nav class="site-nav" aria-label="사이트 메뉴"><a href="/">테스트</a><a href="/tarot/cards/">카드 의미</a><a href="/read/">읽을거리</a></nav>
+  </header>
+
+  <main class="prose">
+    <p class="shop-notice" role="note">이 페이지는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+    <h1>영상 속 상품 모음</h1>
+    <p class="summary">숏폼 영상에 나온 상품을 번호로 찾아보세요. 상품을 누르면 쿠팡 상품 페이지가 새 창으로 열려요.</p>
+
+    <form class="shop-search" id="shopSearch" role="search" novalidate>
+      <div class="field">
+        <label for="shopNum">영상에서 본 상품 번호</label>
+        <input id="shopNum" name="n" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="예: 12">
+      </div>
+      <button class="btn btn-primary" type="submit">찾기</button>
+    </form>
+    <p class="shop-status" id="shopStatus" aria-live="polite"></p>
+    <button class="btn btn-text shop-all" id="shopAll" type="button" hidden>‹ 전체 상품 보기</button>
+    <ol class="shop-list" id="shopList"></ol>
+    <noscript><p>상품 목록을 보려면 브라우저의 자바스크립트를 켜 주세요.</p></noscript>
+<script>
+(function () {
+  'use strict';
+  var list = document.getElementById('shopList');
+  var statusEl = document.getElementById('shopStatus');
+  var form = document.getElementById('shopSearch');
+  var input = document.getElementById('shopNum');
+  var allBtn = document.getElementById('shopAll');
+  var items = [];
+  var ready = false;
+  var LINK = /^https:\/\/[^\s"'<>\\]+$/i;
+
+  function parse(text) {
+    var byNum = {};
+    text.split(/\r?\n/).forEach(function (line) {
+      line = line.trim();
+      if (!line || line.charAt(0) === '#') return;
+      var f = line.split('|').map(function (s) { return s.trim(); });
+      var m = /^(\d{1,6})\s*번?$/.exec(f[0] || '');
+      var num = m ? parseInt(m[1], 10) : 0;
+      var name = f[1] || '', url = f[2] || '', img = f[5] || '';
+      if (!num || !name || !LINK.test(url)) return;
+      byNum[num] = { num: num, name: name, url: url, desc: f[3] || '', cat: f[4] || '', img: LINK.test(img) ? img : '' };
+    });
+    return Object.keys(byNum).map(function (k) { return byNum[k]; }).sort(function (a, b) { return b.num - a.num; });
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text) e.textContent = text;
+    return e;
+  }
+
+  function card(it, hit) {
+    var li = el('li', 'shop-item' + (hit ? ' is-hit' : ''));
+    li.id = 'item-' + it.num;
+    var a = el('a', 'shop-link');
+    a.href = it.url;
+    a.target = '_blank';
+    a.rel = 'sponsored nofollow noopener';
+    a.setAttribute('aria-label', it.num + '번 ' + it.name + ', 쿠팡에서 보기 (새 창)');
+    var media = el('span', 'shop-media');
+    var num = el('span', 'shop-num', String(it.num));
+    num.appendChild(el('small', '', '번'));
+    if (it.img) {
+      var img = document.createElement('img');
+      img.src = it.img;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
+      img.onerror = function () { img.remove(); media.className = 'shop-media'; };
+      media.className = 'shop-media has-img';
+      media.appendChild(img);
+    }
+    media.appendChild(num);
+    var body = el('span', 'shop-body');
+    body.appendChild(el('strong', '', it.name));
+    if (it.desc) body.appendChild(el('small', '', it.desc));
+    if (it.cat) body.appendChild(el('span', 'shop-cat', it.cat));
+    a.appendChild(media);
+    a.appendChild(body);
+    a.appendChild(el('span', 'shop-go', '쿠팡에서 보기 ›'));
+    li.appendChild(a);
+    return li;
+  }
+
+  function render(arr, hit) {
+    list.textContent = '';
+    arr.forEach(function (it) { list.appendChild(card(it, hit)); });
+  }
+
+  function setUrl(n) {
+    try { history.replaceState(null, '', location.pathname + (n ? '?n=' + n : '')); } catch (e) {}
+  }
+
+  function show(q) {
+    if (!ready) return;
+    var digits = String(q || '').replace(/[^0-9]/g, '').slice(0, 6);
+    var n = digits ? parseInt(digits, 10) : 0;
+    if (!n) {
+      render(items, false);
+      statusEl.textContent = items.length ? '상품 ' + items.length + '개가 있어요. 최근에 올라온 순서예요.'
+        : '아직 올라온 상품이 없어요. 영상이 올라오면 여기에 하나씩 채워져요.';
+      allBtn.hidden = true;
+      setUrl('');
+      return;
+    }
+    var hit = items.filter(function (it) { return it.num === n; });
+    render(hit, true);
+    statusEl.textContent = hit.length ? n + '번 상품이에요.' : n + '번 상품을 찾지 못했어요. 영상 속 번호를 다시 확인해 주세요.';
+    allBtn.hidden = !items.length;
+    setUrl(String(n));
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    show(input.value);
+    input.blur();
+  });
+  input.addEventListener('input', function () {
+    var v = input.value.replace(/[^0-9]/g, '').slice(0, 6);
+    if (v !== input.value) input.value = v;
+    show(v);
+  });
+  allBtn.addEventListener('click', function () {
+    input.value = '';
+    show('');
+    input.focus();
+  });
+
+  var start = new URLSearchParams(location.search).get('n') || '';
+  statusEl.textContent = '상품 목록을 불러오는 중이에요.';
+  fetch('/shop/items.txt', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (text) {
+      items = parse(text);
+      ready = true;
+      input.value = start.replace(/[^0-9]/g, '').slice(0, 6);
+      show(input.value);
+    })
+    .catch(function () {
+      statusEl.textContent = '상품 목록을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.';
+    });
+})();
+</script>
+  </main>
+
+  <footer class="site-foot">
+    <p>가격과 재고는 쿠팡에서 바뀔 수 있어요. 구매 전에 상품 페이지에서 꼭 확인해 주세요.</p>
+    <p class="foot-links"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy.html">개인정보처리방침</a></p>
+  </footer>
+</div>
+</body>
+</html>
