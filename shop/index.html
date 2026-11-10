@@ -3,86 +3,126 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>영상 속 상품 모음 | 전생 거울</title>
+<title>영상 속 상품 모음</title>
 <meta name="description" content="숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.">
-<meta name="theme-color" content="#18203A">
+<meta name="theme-color" content="#FFF7EF">
 <link rel="canonical" href="https://pstlf.co.kr/shop/">
 <meta name="robots" content="noindex">
 
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="전생 거울">
+<meta property="og:site_name" content="영상 속 상품 모음">
 <meta property="og:title" content="영상 속 상품 모음">
 <meta property="og:description" content="숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.">
 <meta property="og:url" content="https://pstlf.co.kr/shop/">
-<meta property="og:image" content="https://pstlf.co.kr/share.png">
+<meta property="og:image" content="https://pstlf.co.kr/share-shop.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="600">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=ac7b0e5728">
-
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
 <style>
-.shop-notice { margin: 0 0 22px; padding: 10px 14px; border: 1px solid rgba(200,164,94,.45); border-radius: 10px;
-  background: rgba(200,164,94,.08); color: #F4EFE3; font-size: .88rem; line-height: 1.6; }
-.shop-search { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
-.shop-search .field { margin: 0; }
-.shop-search .btn { width: auto; min-width: 84px; height: 54px; }
-.shop-status { color: var(--moon-dim); font-size: .92rem; margin: 14px 0 10px; min-height: 1.6em; }
-.shop-status:empty { display: none; }
-.prose .shop-all { width: auto; min-height: 44px; padding: 0; margin: -4px 0 8px; color: var(--brass);
-  text-decoration: underline; text-underline-offset: 4px; }
-.shop-list { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 10px; }
+:root {
+  --cream: #FFF7EF; --card: #FFFFFF; --ink: #4A3A33; --ink-soft: #7A665C; --line: #F3E3D6;
+  --peach: #FFB9A3; --peach-deep: #F2937A; --butter: #FFE7A0; --mint: #CDEBDD; --pink: #FFD6DE; --lilac: #E3DAFA;
+  --round: 'Jua', 'Gowun Dodum', 'Noto Sans KR', 'Noto Sans CJK KR', sans-serif;
+  --body: 'Gowun Dodum', 'Noto Sans KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--cream); }
+body { margin: 0; color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.7; word-break: keep-all;
+  -webkit-text-size-adjust: 100%;
+  background: radial-gradient(circle at 12% 4%, #FFE3D6 0, rgba(255,227,214,0) 210px),
+    radial-gradient(circle at 92% 14%, #E2F3EA 0, rgba(226,243,234,0) 190px),
+    radial-gradient(circle at 80% 70%, #FFF0C9 0, rgba(255,240,201,0) 260px), var(--cream);
+  background-attachment: fixed; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--peach-deep); outline-offset: 3px; }
+.shop-page { max-width: 460px; margin: 0 auto; padding: 18px 18px 28px; min-height: 100svh; display: flex; flex-direction: column; }
+.shop-page main { flex: 1; }
+.shop-notice { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 22px; padding: 10px 14px; border-radius: 14px;
+  background: #FFEDE6; border: 1px dashed #F5B8A6; color: #6B4436; font-size: .86rem; line-height: 1.6; }
+.shop-notice::before { content: 'AD'; flex: none; margin-top: 2px; padding: 0 6px; border-radius: 6px; background: #C9583F; color: #fff;
+  font-size: .7rem; font-weight: 700; line-height: 1.7; letter-spacing: .04em; }
+.shop-hero { text-align: center; margin: 4px 0 22px; }
+.shop-hero svg { display: block; width: 74px; height: 74px; margin: 0 auto 6px; }
+h1 { font-family: var(--round); font-weight: 400; font-size: 2rem; line-height: 1.3; margin: 0 0 8px; color: var(--ink); }
+.summary { color: var(--ink-soft); margin: 0; font-size: .96rem; }
+.shop-search { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; padding: 14px; border-radius: 22px;
+  background: var(--card); box-shadow: 0 6px 18px rgba(242,147,122,.14); }
+.shop-search label { display: block; font-family: var(--round); font-size: 1rem; color: var(--ink); margin: 0 0 6px 4px; }
+.shop-search input { display: block; width: 100%; height: 52px; padding: 0 18px; font: inherit; font-family: var(--round); font-size: 19px;
+  color: var(--ink); background: #FFF9F4; border: 2px solid var(--line); border-radius: 999px; -webkit-appearance: none; appearance: none; }
+.shop-search input::placeholder { color: #C7B3A8; }
+.shop-search input:focus { outline: none; border-color: var(--peach); box-shadow: 0 0 0 4px rgba(255,185,163,.3); }
+.btn { display: flex; align-items: center; justify-content: center; border: 0; font: inherit; cursor: pointer; text-decoration: none;
+  -webkit-tap-highlight-color: transparent; }
+.btn:active { transform: translateY(1px); }
+.shop-search .btn { height: 52px; min-width: 78px; padding: 0 20px; border-radius: 999px; background: var(--peach-deep); color: #3E2219;
+  font-family: var(--round); font-size: 1.1rem; box-shadow: 0 3px 0 #D9775F; }
+.shop-status { color: var(--ink-soft); font-size: .92rem; margin: 16px 4px 10px; min-height: 1.6em; }
+.shop-all { background: none; padding: 0 4px; min-height: 44px; margin: -6px 0 8px; color: #B5523B; font-family: var(--round);
+  font-size: 1rem; text-decoration: underline; text-underline-offset: 4px; }
+.shop-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .shop-list li { margin: 0; }
-.prose .shop-link { display: grid; grid-template-columns: 64px 1fr; gap: 6px 14px; align-items: center; padding: 14px;
-  border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(233,228,216,.14);
-  color: var(--moon); text-decoration: none; -webkit-tap-highlight-color: transparent; }
-.prose .shop-link:active { background: rgba(255,255,255,.08); }
-.shop-item.is-hit .shop-link { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(200,164,94,.18); }
-.shop-media { position: relative; width: 64px; height: 64px; border-radius: 10px; overflow: hidden;
-  display: grid; place-items: center; background: rgba(200,164,94,.12); border: 1px solid rgba(200,164,94,.4); }
-.shop-media img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
-.shop-num { font-family: var(--display); color: var(--brass); font-size: 1.5rem; line-height: 1; }
-.shop-num small { font-size: .78rem; margin-left: 1px; }
-.shop-media.has-img .shop-num { position: absolute; left: 0; top: 0; padding: 3px 6px; font-size: .82rem;
-  color: #1E1A12; background: var(--brass); border-bottom-right-radius: 8px; }
+.shop-link { display: grid; grid-template-columns: 64px 1fr; gap: 8px 14px; align-items: center; padding: 14px; border-radius: 22px;
+  background: var(--card); color: var(--ink); text-decoration: none; box-shadow: 0 6px 18px rgba(242,147,122,.12);
+  border: 2px solid transparent; -webkit-tap-highlight-color: transparent; }
+.shop-link:active { transform: scale(.99); }
+.shop-item.is-hit .shop-link { border-color: var(--peach); box-shadow: 0 0 0 4px rgba(255,185,163,.28), 0 6px 18px rgba(242,147,122,.14); }
+.shop-media { position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+  background: var(--butter); }
+.shop-media.c1 { background: var(--mint); } .shop-media.c2 { background: var(--pink); } .shop-media.c3 { background: var(--lilac); }
+.shop-media.has-img { border-radius: 18px; background: #fff; border: 2px solid var(--line); }
+.shop-media img { width: 100%; height: 100%; object-fit: cover; }
+.shop-num { font-family: var(--round); color: var(--ink); font-size: 1.55rem; line-height: 1; }
+.shop-num small { font-size: .8rem; margin-left: 1px; }
+.shop-media.has-img .shop-num { position: absolute; left: 0; top: 0; padding: 3px 7px; font-size: .84rem; background: var(--butter);
+  border-bottom-right-radius: 12px; }
 .shop-media.has-img .shop-num small { font-size: .7rem; }
 .shop-body { min-width: 0; }
-.shop-body strong { display: block; color: #F4EFE3; font-weight: 400; font-size: 1.04rem; line-height: 1.45; overflow-wrap: anywhere; }
-.shop-body small { display: block; color: var(--moon-dim); font-size: .88rem; line-height: 1.55; margin-top: 3px; }
-.shop-cat { display: inline-block; margin-top: 6px; padding: 1px 8px; border-radius: 999px; font-size: .76rem;
-  color: var(--brass); border: 1px solid rgba(200,164,94,.4); }
-.shop-go { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; min-height: 44px;
-  margin-top: 6px; border-radius: 8px; background: var(--brass); color: #1E1A12; font-size: .98rem; }
+.shop-body strong { display: block; font-family: var(--round); font-weight: 400; font-size: 1.08rem; line-height: 1.45; overflow-wrap: anywhere; }
+.shop-body small { display: block; color: var(--ink-soft); font-size: .88rem; line-height: 1.55; margin-top: 2px; }
+.shop-cat { display: inline-block; margin-top: 6px; padding: 1px 10px; border-radius: 999px; font-size: .76rem; color: #3F6B57; background: var(--mint); }
+.shop-go { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; min-height: 46px; margin-top: 4px;
+  border-radius: 999px; background: var(--peach); color: #4A2A20; font-family: var(--round); font-size: 1.02rem; }
+.shop-foot { margin-top: 44px; text-align: center; color: var(--ink-soft); font-size: .82rem; line-height: 1.6; }
+.shop-foot p { margin: 0 0 6px; }
+.shop-foot a { color: var(--ink-soft); text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .btn:active, .shop-link:active { transform: none; } }
 </style>
 </head>
 <body>
-<div class="page">
-  <header class="site-head">
-    <a class="wordmark" href="/">전생 거울</a>
-    <nav class="site-nav" aria-label="사이트 메뉴"><a href="/">테스트</a><a href="/tarot/cards/">카드 의미</a><a href="/read/">읽을거리</a></nav>
-  </header>
-
-  <main class="prose">
+<div class="shop-page">
+  <main>
     <p class="shop-notice" role="note">이 페이지는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
-    <h1>영상 속 상품 모음</h1>
-    <p class="summary">숏폼 영상에 나온 상품을 번호로 찾아보세요. 상품을 누르면 쿠팡 상품 페이지가 새 창으로 열려요.</p>
+    <header class="shop-hero">
+      <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="42" r="34" fill="#FFE7A0"/><path d="M29 32v-4a11 11 0 0 1 22 0v4" fill="none" stroke="#4A3A33" stroke-width="3.2" stroke-linecap="round"/><rect x="20" y="30" width="40" height="34" rx="9" fill="#FFB9A3" stroke="#4A3A33" stroke-width="3.2"/><circle cx="33" cy="45" r="2.4" fill="#4A3A33"/><circle cx="47" cy="45" r="2.4" fill="#4A3A33"/><path d="M35 51q5 4 10 0" fill="none" stroke="#4A3A33" stroke-width="2.6" stroke-linecap="round"/><circle cx="28.5" cy="50" r="3" fill="#F2937A" opacity=".55"/><circle cx="51.5" cy="50" r="3" fill="#F2937A" opacity=".55"/></svg>
+      <h1>영상 속 상품 모음</h1>
+      <p class="summary">영상에서 본 번호를 넣으면 그 상품이 바로 나와요.<br>상품을 누르면 쿠팡 페이지가 새 창으로 열려요.</p>
+    </header>
 
     <form class="shop-search" id="shopSearch" role="search" novalidate>
-      <div class="field">
-        <label for="shopNum">영상에서 본 상품 번호</label>
+      <div>
+        <label for="shopNum">상품 번호</label>
         <input id="shopNum" name="n" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="예: 12">
       </div>
-      <button class="btn btn-primary" type="submit">찾기</button>
+      <button class="btn" type="submit">찾기</button>
     </form>
     <p class="shop-status" id="shopStatus" aria-live="polite"></p>
-    <button class="btn btn-text shop-all" id="shopAll" type="button" hidden>‹ 전체 상품 보기</button>
+    <button class="btn shop-all" id="shopAll" type="button" hidden>‹ 전체 상품 보기</button>
     <ol class="shop-list" id="shopList"></ol>
     <noscript><p>상품 목록을 보려면 브라우저의 자바스크립트를 켜 주세요.</p></noscript>
+  </main>
+
+  <footer class="shop-foot">
+    <p>가격과 재고는 쿠팡에서 바뀔 수 있어요. 구매 전에 상품 페이지에서 꼭 확인해 주세요.</p>
+    <p><a href="/privacy.html">개인정보처리방침</a></p>
+  </footer>
+</div>
 <script>
 (function () {
   'use strict';
@@ -125,7 +165,8 @@
     a.target = '_blank';
     a.rel = 'sponsored nofollow noopener';
     a.setAttribute('aria-label', it.num + '번 ' + it.name + ', 쿠팡에서 보기 (새 창)');
-    var media = el('span', 'shop-media');
+    var tone = ' c' + (it.num % 4);
+    var media = el('span', 'shop-media' + tone);
     var num = el('span', 'shop-num', String(it.num));
     num.appendChild(el('small', '', '번'));
     if (it.img) {
@@ -135,7 +176,7 @@
       img.loading = 'lazy';
       img.decoding = 'async';
       img.referrerPolicy = 'no-referrer';
-      img.onerror = function () { img.remove(); media.className = 'shop-media'; };
+      img.onerror = function () { img.remove(); media.className = 'shop-media' + tone; };
       media.className = 'shop-media has-img';
       media.appendChild(img);
     }
@@ -210,12 +251,5 @@
     });
 })();
 </script>
-  </main>
-
-  <footer class="site-foot">
-    <p>가격과 재고는 쿠팡에서 바뀔 수 있어요. 구매 전에 상품 페이지에서 꼭 확인해 주세요.</p>
-    <p class="foot-links"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy.html">개인정보처리방침</a></p>
-  </footer>
-</div>
 </body>
 </html>
