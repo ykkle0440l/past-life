@@ -10,3 +10,5 @@
 #
 # 예시 (맨 앞 # 을 지우면 사이트에 나와요)
 # 1 | 접이식 실리콘 냄비 | https://link.coupang.com/a/xxxxxx | 접으면 손바닥만 해지는 캠핑 냄비 | 캠핑
+
+1 | 수건걸이 욕실 미니 온풍기 | https://link.coupang.com/a/izj7wKvg04 | 수건걸이에 걸면 설치 끝, 과열되면 자동 차단 | 생활
