@@ -1,15 +1,18 @@
-"""상품 모음 공유 이미지(share-shop.png, 1200x600) 만들기
+"""상품 모음 그림 만들기
 
     python3 _build/make_share_shop.py
 
-카카오톡 같은 곳에 /shop/ 링크를 붙였을 때 보이는 그림이에요. 문구를 바꿀 때만 다시 실행해요.
+- share-shop.png (1200x600): 카카오톡 같은 곳에 /shop/ 링크를 붙였을 때 보이는 그림
+- shop/apple-touch-icon.png (180), shop/icon-192.png (192): 지구별꿀템 행성 아이콘
+  (휴대폰 홈 화면, 스레드·인스타 링크 옆 작은 아이콘)
+문구나 아이콘을 바꿀 때만 다시 실행해요.
 (Python Playwright, Chromium 필요)
 """
 import os, pathlib, sys
 from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from build import SHOP_BAG
+from build import SHOP_BAG, shop_planet_svg
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHROME = '/usr/bin/google-chrome' if os.path.exists('/usr/bin/google-chrome') else None
@@ -41,5 +44,12 @@ with sync_playwright() as p:
     pg.set_content(HTML)
     pg.wait_for_timeout(300)
     pg.screenshot(path=str(ROOT / 'share-shop.png'))
+    # 큰 아이콘은 선을 가늘게 해서 로고와 비슷하게
+    big_icon = shop_planet_svg(line=1.2, dot=1.9, zoom=.86)
+    for name, size in [('apple-touch-icon.png', 180), ('icon-192.png', 192)]:
+        ip = b.new_page(viewport={'width': size, 'height': size}, device_scale_factor=1)
+        ip.set_content(f'<html><body style="margin:0">{big_icon.replace('<svg ', f'<svg width="{size}" height="{size}" ', 1)}</body></html>')
+        ip.screenshot(path=str(ROOT / 'shop' / name), omit_background=True)
+        ip.close()
     b.close()
-print('share-shop.png 만들었어요')
+print('share-shop.png, shop/apple-touch-icon.png, shop/icon-192.png 만들었어요')

@@ -805,12 +805,30 @@ SHOP_BAG = ('<svg viewBox="0 0 80 80" aria-hidden="true">'
             '</svg>')
 
 
+def shop_planet_svg(line=3.4, dot=2.8, zoom=1):
+    """지구별꿀템 로고의 행성 아이콘. 작은 탭 아이콘은 선을 굵게(line 3.4), 큰 아이콘은 가늘고 작게(zoom) 그려요.
+    고리 뒤쪽은 행성에 가려지고, 앞쪽 반원만 행성 위로 지나가요."""
+    ink, gold, cream = '#3A3734', '#C9A97A', '#FCF5EE'
+    rx, ry = 24, 6.4
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
+            f'<rect width="64" height="64" rx="14" fill="{cream}"/>'
+            f'<g transform="translate(32 33) scale({zoom:g}) translate(-32 -33) rotate(-20 32 33)">'
+            f'<ellipse cx="32" cy="33" rx="{rx}" ry="{ry}" fill="none" stroke="{ink}" stroke-width="{line * .8:g}"/>'
+            f'<circle cx="32" cy="33" r="13.5" fill="{cream}" stroke="{ink}" stroke-width="{line:g}"/>'
+            f'<path d="M{32 - rx} 33A{rx} {ry} 0 0 0 {32 + rx} 33" fill="none" stroke="{ink}" stroke-width="{line * .8:g}"/>'
+            f'<circle cx="{32 + 19.7:g}" cy="{33 - 3.7:g}" r="{dot:g}" fill="{gold}"/>'
+            '</g></svg>')
+
+
 def build_shop():
     """숏폼 영상 속 상품 모음 (/shop/). 상품은 shop/items.txt 한 파일만 고치면 돼요.
     전생 거울과 분위기를 다르게(밝은 파스텔) 하려고 공통 틀(page) 대신 따로 만든 틀을 써요.
+    탭·링크 아이콘도 전생 거울 것 대신 지구별꿀템 행성 아이콘(shop/icon.svg)을 써요.
+    큰 그림(apple-touch-icon.png, icon-192.png)은 _build/make_share_shop.py 로 만들어요.
     검색에 나올 필요가 없는 링크 페이지라 noindex, 사이트맵·메뉴에서 빠지고, 애드센스도 넣지 않아요."""
     if not (ROOT / 'shop/items.txt').exists():
         write('shop/items.txt', SHOP_ITEMS_TEMPLATE)
+    write('shop/icon.svg', shop_planet_svg())
     url = SITE + '/shop/'
     title = '영상 속 상품 모음'
     desc = '숏폼 영상에 나온 상품을 번호로 찾아보는 페이지예요.'
@@ -835,7 +853,9 @@ def build_shop():
 <meta property="og:image:height" content="600">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/shop/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/shop/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/shop/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">

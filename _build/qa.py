@@ -77,7 +77,7 @@ for f in html_files:
 check(len({v.split('?')[0] + v.split('?')[1] for v in versions}) == 2, f'assets 버전이 여러 개: {versions}')
 for tp in ['past-life/index.html', 'bond/index.html', 'tarot/index.html', 'tarot/2027/index.html']:
     check('PartnersCoupang.G' in (ROOT / tp).read_text(encoding='utf-8'), f'{tp}: 쿠팡 배너 없음')
-for need in ['CNAME', 'ads.txt', 'robots.txt', 'sitemap.xml', 'favicon.svg', 'apple-touch-icon.png', 'share.png', 'share-bond.png', 'share-tarot.png', 'share-2027.png', 'share-shop.png']:
+for need in ['CNAME', 'ads.txt', 'robots.txt', 'sitemap.xml', 'favicon.svg', 'apple-touch-icon.png', 'share.png', 'share-bond.png', 'share-tarot.png', 'share-2027.png', 'share-shop.png', 'shop/icon.svg', 'shop/apple-touch-icon.png', 'shop/icon-192.png']:
     check((ROOT / need).exists(), f'파일 없음: {need}')
 check((ROOT / 'CNAME').read_text().strip() == 'pstlf.co.kr', 'CNAME 내용')
 for tp in ['index.html', 'past-life/index.html']:
@@ -106,6 +106,10 @@ shop_src = (ROOT / 'shop/index.html').read_text(encoding='utf-8')
 check('<meta name="robots" content="noindex">' in shop_src, 'shop: noindex 없음')
 check('class="site-head"' not in shop_src and '/assets/site.css' not in shop_src, 'shop: 전생 거울 머리말·공통 스타일이 들어감')
 check('content="https://pstlf.co.kr/share-shop.png"' in shop_src, 'shop: 상품 모음 공유 그림이 아님')
+check('href="/shop/icon.svg"' in shop_src and 'href="/shop/apple-touch-icon.png"' in shop_src and 'href="/favicon.svg"' not in shop_src,
+      'shop: 탭 아이콘이 지구별꿀템 행성 아이콘이 아님')
+for icon, size in [('shop/apple-touch-icon.png', 180), ('shop/icon-192.png', 192)]:
+    check(struct.unpack('>II', (ROOT / icon).read_bytes()[16:24]) == (size, size), f'{icon}: {size}x{size} 아님')
 check('/shop/' not in (ROOT / 'sitemap.xml').read_text(), 'shop: sitemap에 들어가면 안 됨')
 check(not any('href="/shop/"' in f.read_text(encoding='utf-8') for f in html_files if f.parent.name != 'shop'), 'shop: 다른 페이지 메뉴에 링크가 생김')
 main_html = re.split(r'<main[^>]*>', shop_src, maxsplit=1)[1].lstrip()
